@@ -72,10 +72,14 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     }
 
     //--record data to local file.
+#ifdef TESTVIEW
+    std::ofstream outfile("/var/www/html/testview.txt",std::ios::app);
+#else
     std::string file="count";
     file += g_time;
     file += ".dat";
     std::ofstream outfile(file.data(),std::ios::app);
+#endif
     g_count++;
     outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<std::endl;
      

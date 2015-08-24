@@ -12,7 +12,7 @@ DIR_3RD_OPENCV2=${DIR_3RD}/opencv2
 DIR_LIB_OPENCV=${DIR_LIB}/lib_opencv2.4.9_x64
 #mysql
 DIR_3RD_MYSQL=${DIR_3RD}/mysql
-DIR_LIB_MYSQL=${DIR_LIB}/lib_mysql6.1.5_i686
+DIR_LIB_MYSQL=${DIR_LIB}/lib_mysql6.1.6_x64
 #x264
 DIR_3RD_X264 = ${DIR_3RD}/x264
 DIR_LIB_X264 = ${DIR_LIB}/lib_x264
