@@ -20,13 +20,13 @@ DIR_LIB_X264 = ${DIR_LIB}/lib_x264
 $(shell mkdir -p ${DIR_OBJ})
 $(shell mkdir -p ${DIR_BIN})
 
-
+CC=g++
 CXXFLAGS=-g -DTESTVIEW -Wall -I${DIR_INC} -I${DIR_3RD} -I${DIR_3RD_OPENCV} -I${DIR_3RD_OPENCV2} -I${DIR_3RD_MYSQL} -I${DIR_3RD_X264}
 LDFLAGS = -L${DIR_LIB} -L${DIR_LIB_OPENCV} -Wl,-rpath=../lib/lib_opencv2.4.9_x64 -L${DIR_LIB_MYSQL} -Wl,-rpath=../lib/lib_mysql6.1.6_x64 -L${DIR_LIB_X264} #-Wl,-rpath=../lib/x264
 SRC=$(wildcard ${DIR_SRC}/*.cc)
 OBJ=$(patsubst %.cc,${DIR_OBJ}/%.o,$(notdir $(SRC)))
 
-TARGET = Vidy_TestView
+TARGET = Vidy
 
 BIN_TARGET = ${DIR_BIN}/${TARGET}
 
@@ -37,7 +37,7 @@ LIBS_MYSQL = -lmysqlclient
 #LIBS_X264 = -lpthread -lx264 -lm
 
 ${BIN_TARGET} : ${OBJ}
-	$(CC) $(OBJ) -o $@ $(LDFLAGS) ${LIBS_OPENCV} ${LIBS_MYSQL} ${LIBS_X264} -lstdc++ -lpthread -lm
+	$(CC) $(OBJ) -o $@ $(LDFLAGS) ${LIBS_OPENCV} ${LIBS_MYSQL} ${LIB_X264} -lstdc++ -lptherad -lm
 ${DIR_OBJ}/%.o: ${DIR_SRC}/%.cc
 	$(CC) $(CXXFLAGS) -c $< -o $@
 .PHONY:clean
