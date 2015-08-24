@@ -34,10 +34,10 @@ LIBS_OPENCV = -lopencv_core -lopencv_highgui -lopencv_calib3d -lopencv_contrib -
 
 LIBS_MYSQL = -lmysqlclient
 
-LIBS_X264 = -lpthread -lx264 -lm
+#LIBS_X264 = -lpthread -lx264 -lm
 
 ${BIN_TARGET} : ${OBJ}
-	$(CC) $(OBJ) -o $@ $(LDFLAGS) ${LIBS_OPENCV} ${LIBS_MYSQL} ${LIBS_X264} -lstdc++
+	$(CC) $(OBJ) -o $@ $(LDFLAGS) ${LIBS_OPENCV} ${LIBS_MYSQL} ${LIBS_X264} -lstdc++ -lpthread -lm
 ${DIR_OBJ}/%.o: ${DIR_SRC}/%.cc
 	$(CC) $(CXXFLAGS) -c $< -o $@
 .PHONY:clean
