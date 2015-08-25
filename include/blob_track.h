@@ -13,9 +13,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
-#ifdef DEBUG
 #include <opencv2/highgui/highgui.hpp>
-#endif //DEBUG
+
 
 namespace vidy{
 

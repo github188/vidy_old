@@ -1,3 +1,7 @@
+//Copyright(c) 2015 Extreme Vision Ltd. All rights reserved.
+//File:autorun.cc
+//Author:Yun Luo(lauren.luo@extremevision.mo)
+
 #include "autorun.h"
 #include "global.h"
 
