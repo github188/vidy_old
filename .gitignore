@@ -4,3 +4,4 @@
 Makefile
 Makefile.debug
 /scripts/run.sh
+/result/
