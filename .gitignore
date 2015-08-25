@@ -4,4 +4,6 @@
 Makefile
 Makefile.debug
 /scripts/run.sh
+/scripts/run_save2db.sh
 /result/
+/save2db/Makefile

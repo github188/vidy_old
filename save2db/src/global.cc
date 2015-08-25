@@ -4,7 +4,8 @@
 
 #include "global.h"
 
-char* g_date="";
-char* g_time="";
+char* g_date ="";
+char* g_date2="";
+char* g_time ="";
 char* g_filename="";
 

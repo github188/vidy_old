@@ -5,9 +5,12 @@
 #include "blob_generate.h"
 #include "global.h"
 #include <fstream>
-#ifdef DEBUG
 #include <opencv2/highgui/highgui.hpp>
-#endif
+
+#include "stdlib.h"
+#include "stdio.h"
+
+#define random(x) (rand()%x)
 
 namespace vidy{
 
@@ -90,6 +93,15 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     std::ofstream outfile(file.data(),std::ios::app);
 #endif // TESTVIEW
     g_count++;
+
+    if(endBlobNodeList[i].gender==2){
+        endBlobNodeList[i].gender = random(2);
+    }
+
+    if(endBlobNodeList[i].age==0){
+        endBlobNodeList[i].age = 10*(random(4) + 2);
+    }
+
     outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<std::endl;
      
     //--update realtime data.    

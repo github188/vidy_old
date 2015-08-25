@@ -106,14 +106,22 @@ int main(int argc,char* argv[]){
       char ctime[20];
       strftime(ctime,sizeof(ctime),"%Y%m%d%H",localtime(&t));
       g_time=ctime;
+      
+      int hour;
+      char chour[20];
+      strftime(chour,sizeof(chour),"%H",localtime(&t));
+      hour = atoi(chour);
  
 #ifdef DEBUG
       //cv::line(frame,cv::Point(g_door_x1,g_door_y1),cv::Point(g_door_x2,g_door_y2),cv::Scalar(255,0,0),3);
       cv::imshow("frame",frame);
 #endif //DEBUG
-      //--process runs.
-      pAutoRun->Process(frame);
-      
+
+      if(hour>=8 && hour<21){
+        //--process runs.
+        pAutoRun->Process(frame);
+      }
+
       double finish_time=clock();
 
       double duration=(finish_time-begin_time)/CLOCKS_PER_SEC;

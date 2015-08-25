@@ -9,14 +9,14 @@ DIR_3RD=../3rdparty
 
 #mysql
 DIR_3RD_MYSQL=${DIR_3RD}/mysql
-DIR_LIB_MYSQL=${DIR_LIB}/lib_mysql6.1.5_i686
+DIR_LIB_MYSQL=${DIR_LIB}/lib_mysql6.1.6_x64
 
 $(shell mkdir -p ${DIR_OBJ})
 $(shell mkdir -p ${DIR_BIN})
 
 CC=g++
-CXXFLAGS=-g -DDEBUG -Wall -I${DIR_INC} -I${DIR_3RD} -I${DIR_3RD_MYSQL}
-LDFLAGS = -L${DIR_LIB} -L${DIR_LIB_MYSQL} -Wl,-rpath=../../lib/lib_mysql6.1.5_i686
+CXXFLAGS=-g -DSERVER -Wall -I${DIR_INC} -I${DIR_3RD} -I${DIR_3RD_MYSQL}
+LDFLAGS = -L${DIR_LIB} -L${DIR_LIB_MYSQL} -Wl,-rpath=/root/vidy/lib/lib_mysql6.1.6_x64
 SRC=$(wildcard ${DIR_SRC}/*.cc)
 OBJ=$(patsubst %.cc,${DIR_OBJ}/%.o,$(notdir $(SRC)))
 

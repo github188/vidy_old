@@ -5,7 +5,8 @@
 #ifndef VIDY_SAVE2DB_INC_GLOBAL_H_
 #define VIDY_SAVE2DB_INC_GLOBAL_H_
 
-extern char* g_date;
-extern char* g_time;
-extern char* g_filename;
+extern char* g_date;     //Format:"%Y-%M-%D"
+extern char* g_date2;    //Format:"%Y%M%D"
+extern char* g_time;     //Format:"%H"
+extern char* g_filename; //Format:"/root/vidy/result/*.dat"
 #endif //VIDY_SAVE2DB_INC_GLOBAL_H_
