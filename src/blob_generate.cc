@@ -75,11 +75,20 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
 #ifdef TESTVIEW
     std::ofstream outfile("/var/www/html/testview.txt",std::ios::app);
 #else
-    std::string file="count";
+
+#ifdef SERVER
+    std::string file="/root/vidy/result/";
+#else
+    std::string file="../result/";
+#endif // SERVER
+    file += g_dbname;
+    file += "-cid";
+    file += g_cid;
+    file += "-count";
     file += g_time;
     file += ".dat";
     std::ofstream outfile(file.data(),std::ios::app);
-#endif
+#endif // TESTVIEW
     g_count++;
     outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<std::endl;
      

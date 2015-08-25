@@ -22,7 +22,7 @@ void help(){
 //@param argv[4]:camera type.
 int main(int argc,char* argv[]){
 
-  if(argc<4){
+  if(argc<5){
     help();
     return 0;
   }
@@ -32,7 +32,11 @@ int main(int argc,char* argv[]){
   g_type=atoi(argv[4]);
     
   //--get calibrated data.
+#ifdef SERVER
+  std::string filename="/root/vidy/calibration/";
+#else
   std::string filename="../calibration/"; 
+#endif // SERVER
   filename += g_dbname;
   filename += "-cid";
   filename += g_cid;
