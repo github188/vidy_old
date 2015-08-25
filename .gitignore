@@ -7,3 +7,5 @@ Makefile.debug
 /scripts/run_save2db.sh
 /result/
 /save2db/Makefile
+/save2db/obj/
+/save2db/bin/
