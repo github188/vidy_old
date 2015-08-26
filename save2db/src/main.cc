@@ -74,9 +74,9 @@ int main(int argc,char* argv[]){
     current_hour=atoi(ctime);
    
     //save data in every hour. 
-    if(current_hour!=previous_hour&&previous_hour!=0&&current_hour>8&&current_hour<22){ 
+    if(current_hour!=previous_hour/*&&previous_hour!=0&&current_hour>8&&current_hour<22*/){ 
       //read data of last hour.
-      sprintf(g_time,"%d",previous_hour);
+      //sprintf(g_time,"%02d",previous_hour);
 #ifdef DEBUG
       printf("save2db->Save2DB()\n");
 #endif //DEBUG

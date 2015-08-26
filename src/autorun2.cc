@@ -27,6 +27,8 @@ CAutoRun2::CAutoRun2(){
   this->ClearPixel();
 
   count=FPS;
+
+  update_background=false;
 }
 
 CAutoRun2::~CAutoRun2(){
@@ -57,14 +59,20 @@ void CAutoRun2::Process(const cv::Mat frame){
 
     //update background.
     icurrenttime=atoi(g_time);
-    if(g_time[8]=='1'&&g_time[9]=='5'){
+    if(g_time[8]=='1'&&g_time[9]=='5'&&(!update_background)){
+#ifdef DEBUG
+      std::cout<<"update background"<<std::endl;
+#endif //DEBUG
       background=frame.clone();  
       cv::cvtColor(background,background_gray,CV_RGB2GRAY);
       background_gray.copyTo(background_gray_roi,mask);
+      update_background=true;
+    }else{
+      update_background=false;
     }
 
     //print data.
-    if(iprevioustime!=icurrenttime){
+    if(iprevioustime!=icurrenttime&&iprevioustime!=0){
       this->Print();
       this->ClearPixel();
     }
@@ -75,8 +83,19 @@ void CAutoRun2::Process(const cv::Mat frame){
 }
 
 void CAutoRun2::Print(){
+#ifdef DEBUG
+  std::cout<<"Print.."<<std::endl;
+#endif
   //print data to local file.
-  std::string file="heatmap";
+#ifdef SERVER
+  std::string file="/root/vidy/result/";
+#else
+  std::string file="../result/";
+#endif
+  file += g_dbname;
+  file += "-cid";
+  file += g_cid;
+  file += "-heatmap";
   file += g_time;
   file += ".dat";
   std::ofstream outfile(file.data(),std::ios::app);

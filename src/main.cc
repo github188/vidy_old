@@ -42,15 +42,30 @@ int main(int argc,char* argv[]){
   filename += g_cid;
   filename += ".dat";
   std::ifstream inFile(filename.data(),std::ios::in);
-  while(!inFile.eof()){
-    cv::Point point;
-    inFile>>point.x>>point.y;
-    g_calibrate.push_back(point);
+
+  //default calibrate.
+  if(!inFile.is_open()){
+    cv::Point point1(0,0);
+    cv::Point point2(1280,0);
+    cv::Point point3(1280,720);
+    cv::Point point4(0,720);
+    g_calibrate.push_back(point1);
+    g_calibrate.push_back(point2);
+    g_calibrate.push_back(point3);
+    g_calibrate.push_back(point4);
+  }else{
+    while(!inFile.eof()){
+      cv::Point point;
+      inFile>>point.x>>point.y;
+      g_calibrate.push_back(point);
+    }
   }
   inFile.close();
 
   //delete last data as it's empty.
-  g_calibrate.erase(g_calibrate.end());
+  if(g_calibrate.size()>1){
+    g_calibrate.erase(g_calibrate.end());
+  }
   
   //--Init processing class.
   vidy::IAutoRun* pAutoRun;

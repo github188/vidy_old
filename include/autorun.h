@@ -65,6 +65,7 @@ private:
   int icurrenttime;
   int iprevioustime;
   int count;
+  bool update_background;
 }; //class CAutoRun2
 
 class CAutoRun3 : public IAutoRun{
