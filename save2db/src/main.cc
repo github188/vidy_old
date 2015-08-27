@@ -74,7 +74,11 @@ int main(int argc,char* argv[]){
     current_hour=atoi(ctime);
    
     //save data in every hour. 
+#ifdef SERVER
     if(current_hour!=previous_hour&&previous_hour!=0&&current_hour>8&&current_hour<22){ 
+#else
+    if(current_hour!=previous_hour){
+#endif // SERVER
       //read data of last hour.
       sprintf(g_time,"%02d",previous_hour);
 #ifdef DEBUG
