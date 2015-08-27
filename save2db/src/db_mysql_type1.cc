@@ -143,8 +143,10 @@ void CDBMySQL1::Save2DB(){
 
 #ifdef DEBUG
   printf("SavePathway()..\n");
-#endif // DEBUG  
-  this->SavePathway();
+#endif // DEBUG
+  
+  //note. web server is not ready. 
+  //this->SavePathway();
 
 }
 
