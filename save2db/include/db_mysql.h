@@ -16,6 +16,8 @@
 #include "configs.h"
 #include "global.h"
 
+#define random(x) (rand()%x)
+
 namespace vidy{
 
 class IDBMySQL : public ISave2DB{
@@ -75,6 +77,17 @@ class CDBMySQL3 : public IDBMySQL{
     CDBMySQL3();
     ~CDBMySQL3();
     virtual void Save2DB();
+  protected:
+    void SavePathway();
+  private:
+    std::string pathway_filename;
+    std::vector<std::vector<cv::Point> > pathways;
+    //raw data.
+    int direct_1;
+    int direct_2;
+    int direct_3;
+    //sql sentence.
+    char sql[1024];
 }; //class CDBMySQL3
 
 } //namespace vidy

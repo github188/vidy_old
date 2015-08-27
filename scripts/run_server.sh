@@ -6,4 +6,5 @@
 /root/vidy/bin/Vidy CTCCHZ 21 http://120.55.117.62:8090/flv21.flv 1 &
 /root/vidy/bin/Vidy CTCCHZ 22 http://120.55.117.62:8090/flv22.flv 1 &
 /root/vidy/bin/Vidy CTCCHZ 23 http://120.55.117.62:8090/flv23.flv 1 &
+/root/vidy/bin/Vidy CTCCHZ 25 http://120.55.117.62:8090/flv25.flv 2 &
 
