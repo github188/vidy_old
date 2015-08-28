@@ -13,7 +13,11 @@ AgeEstimate::AgeEstimate(){
   graydata = new int[1600];
   LDAMatrix = new double[1600*47];
   LoadLDA(LDAMatrix);
+#ifdef SERVER
+  model = svm_load_model("/root/vidy/data/age/LDA_morph.model");
+#else
   model = svm_load_model("../data/age/LDA_morph.model");
+#endif // SERVER
 }
 
 AgeEstimate::~AgeEstimate(){
@@ -37,7 +41,11 @@ int AgeEstimate::EstimateByFace(cv::Mat face_original){
 
         
 void AgeEstimate::LoadLDA(double *LDAMatrix){
+#ifdef SERVER
+        std::ifstream LDAEig("/root/vidy/data/age/LDAEig_morph.txt");
+#else
         std::ifstream LDAEig("../data/age/LDAEig_morph.txt");
+#endif // SERVER
 
         for(int i=0;i<1600*47;i++){
                 LDAEig >> LDAMatrix[i];

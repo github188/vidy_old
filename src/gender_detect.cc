@@ -8,7 +8,19 @@
 namespace vidy{
 
 GenderDetect::GenderDetect(){
-  //-- Gender Estimation	
+  //-- Gender Estimation
+#ifdef SERVER
+  model = cv::createEigenFaceRecognizer();
+  model->load("/root/vidy/data/gender/eigenface.yml");
+  eigenvalues=model->getMat("eigenvalues");
+  W=model->getMat("eigenvectors");
+  xth=121;
+  evs=cv::Mat(W,cv::Range::all(),cv::Range(0,xth));
+  mean=model->getMat("mean");
+  fishermodel = cv::createFisherFaceRecognizer();
+  fishermodel->load("/root/vidy/data/gender/fisher.yml");
+  sample=cv::imread("/root/vidy/data/gender/1.png");
+#else	
   model = cv::createEigenFaceRecognizer();
   model->load("../data/gender/eigenface.yml");
   eigenvalues=model->getMat("eigenvalues");
@@ -19,6 +31,7 @@ GenderDetect::GenderDetect(){
   fishermodel = cv::createFisherFaceRecognizer();
   fishermodel->load("../data/gender/fisher.yml");
   sample=cv::imread("../data/gender/1.png");
+#endif // SERVER
 }
 
 GenderDetect::~GenderDetect(){
