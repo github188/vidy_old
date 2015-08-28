@@ -17,7 +17,11 @@ CBlobTrack::CBlobTrack(){
   existBlobNodeList2=NULL;
   blobcompare=new BlobCompare();
   //init face detect
+#ifdef SERVER
+  std::string face+cascade_name = "/root/vidy/data/haarcascades/haarcascade_frontalface_alt.xml";
+#else
   std::string face_cascade_name = "../data/haarcascades/haarcascade_frontalface_alt.xml";
+#endif // SERVER
   if(!face_cascade.load(face_cascade_name)){
     printf("--(!)Error loading(face detect)\n");
   };
