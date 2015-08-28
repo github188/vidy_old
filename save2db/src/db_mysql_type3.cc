@@ -67,7 +67,7 @@ void CDBMySQL3::SavePathway(){
     percentage_2 = 100*(direct_2/total);
     percentage_3 = 100-(percentage_1+percentage_2);
   }
-  for(unsigned int i=0;i<3;i++){
+  for(unsigned int i=0;i<pathways.size();i++){
     std::string sql = "insert into t_data_path_result(cid,date,time,path,percentage) values('";
     char ccid[10];
     sprintf(ccid,"%d",g_cid);

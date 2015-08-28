@@ -94,7 +94,7 @@ void CDBMySQL1::Save2DB(){
     //--gender.
     if(_gender==1){
       male++;
-    }else if(_gender==2){
+    }else if(_gender==0){
       female++;
     }
     //--direciton.
