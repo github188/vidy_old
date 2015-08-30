@@ -5,7 +5,7 @@
 #ifndef VIDY_INC_PREBLOB_H_
 #define VIDY_INC_PREBLOB_H_
 
-#define PREBLOBNUM 2
+#define PREBLOBNUM 1
 
 #include "blob.h"
 
