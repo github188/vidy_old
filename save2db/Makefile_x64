@@ -16,7 +16,7 @@ $(shell mkdir -p ${DIR_BIN})
 
 CC=g++
 CXXFLAGS=-g -DSERVER -Wall -I${DIR_INC} -I${DIR_3RD} -I${DIR_3RD_MYSQL}
-LDFLAGS = -L${DIR_LIB} -L${DIR_LIB_MYSQL} -Wl,-rpath=/root/vidy/lib/lib_mysql6.1.6_x64
+LDFLAGS = -L${DIR_LIB} -L${DIR_LIB_MYSQL} -Wl,-rpath=/usr/local/vidy/lib/lib_mysql6.1.6_x64
 SRC=$(wildcard ${DIR_SRC}/*.cc)
 OBJ=$(patsubst %.cc,${DIR_OBJ}/%.o,$(notdir $(SRC)))
 
