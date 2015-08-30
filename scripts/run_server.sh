@@ -6,5 +6,4 @@
 /usr/local/vidy/bin/Vidy CTCCHZ 21 http://10.173.164.13:8090/flv21.flv 1 &
 /usr/local/vidy/bin/Vidy CTCCHZ 22 http://10.173.164.13:8090/flv22.flv 1 &
 /usr/local/vidy/bin/Vidy CTCCHZ 23 http://10.173.164.13:8090/flv23.flv 1 &
-/usr/local/vidy/bin/Vidy CTCCHZ 25 http://10.173.164.13:8090/flv25.flv 2 &
 
