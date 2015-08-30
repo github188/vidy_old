@@ -80,7 +80,7 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
 #else
 
 #ifdef SERVER
-    std::string file="/root/vidy/result/";
+    std::string file="/usr/local/vidy/result/";
 #else
     std::string file="../result/";
 #endif // SERVER

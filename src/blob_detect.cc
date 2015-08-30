@@ -238,12 +238,12 @@ void CBlobDetect::Init(){
   //init HOG detect.
   people_detect_hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
   //init face detect.
-  std::string face_cascade_name = "/root/vidy/data/haarcascades/haarcascade_frontalface_alt.xml";
+  std::string face_cascade_name = "/usr/local/vidy/data/haarcascades/haarcascade_frontalface_alt.xml";
   if( !face_cascade.load( face_cascade_name ) ){
     printf("--(!)Error loading\n");
   };
   //init upper body detect.
-  std::string upperbody_cascade_name = "/root/vidy/data/haarcascades/haarcascade_mcs_upperbody.xml";
+  std::string upperbody_cascade_name = "/usr/local/vidy/data/haarcascades/haarcascade_mcs_upperbody.xml";
   if( !upperbody_cascade.load(upperbody_cascade_name ) ){
     printf("--(!)Error loading\n");
   };
