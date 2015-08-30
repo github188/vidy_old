@@ -37,7 +37,7 @@ int main(int argc,char* argv[]){
     
   //--get calibrated data.
 #ifdef SERVER
-  std::string filename="/root/vidy/calibration/";
+  std::string filename="/usr/local/vidy/calibration/";
 #else
   std::string filename="../calibration/"; 
 #endif // SERVER
