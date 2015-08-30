@@ -93,6 +93,9 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
       cv::Mat face_tmp(_frame,face_rect);
       if(((*existBlobNodeList)[i].face).empty()){
         (*existBlobNodeList)[i].face=face_tmp.clone();
+#ifdef DEBUG
+        cv::imshow("face",face_tmp);
+#endif 
       }
 #ifdef DEBUG
       cv::rectangle(_frame,face_rect,cv::Scalar(0,0,255),3);

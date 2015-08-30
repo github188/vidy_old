@@ -51,9 +51,6 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
   for(unsigned int i=0;i<endBlobNodeList.size();i++){  
     //--gender detect.
     if(!(endBlobNodeList[i].face.empty())){
-#ifdef DEBUG
-      cv::imshow("face",endBlobNodeList[i].face);
-#endif
       cv::Mat face_gray;
       cv::cvtColor(endBlobNodeList[i].face,face_gray,CV_RGB2GRAY);
       endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
