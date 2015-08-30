@@ -9,7 +9,7 @@ namespace vidy{
 
 CDBMySQL1::CDBMySQL1(){
 #ifdef SERVER
-  pathway_filename = "/root/vidy/calibration/";
+  pathway_filename = "/usr/local/vidy/calibration/";
 #else
   pathway_filename = "../../calibration/";
 #endif // SERVER
@@ -53,7 +53,7 @@ void CDBMySQL1::Save2DB(){
   //get result data.
   char g_filename_c[200];
 #ifdef SERVER
-  sprintf(g_filename_c,"/root/vidy/result/%s-cid%d-count%s%s.dat",g_dbname,g_cid,g_date2,g_time);
+  sprintf(g_filename_c,"/usr/local/vidy/result/%s-cid%d-count%s%s.dat",g_dbname,g_cid,g_date2,g_time);
 #else
   sprintf(g_filename_c,"../../result/%s-cid%d-count%s%s.dat",g_dbname,g_cid,g_date2,g_time);
 #endif // SERVER
