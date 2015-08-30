@@ -25,7 +25,7 @@ class IDBMySQL : public ISave2DB{
     //get params of database.
     IDBMySQL();
     ~IDBMySQL();
-    int InsertData(const char* sql);
+    virtual int InsertData(const char* sql);
     std::vector<std::vector<std::string> > GetData(const char* sql);
     virtual void Save2DB(){};
   protected:
