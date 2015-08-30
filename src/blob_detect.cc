@@ -134,17 +134,7 @@ BlobNodeList CBlobDetect::DetectUpperBody2(const cv::Mat frame){
       upperbodies[i].height<HMIN){
       continue;
     }
-    //detect face.
-    /*std::vector<cv::Rect> faces;
-    cv::Mat face_gray(frame_gray,upperbodies[i]);
-    face_cascade.detectMultiScale(face_gray,faces,1.1,2,0|CV_HAAR_SCALE_IMAGE,cv::Size(30,30));
-    if(faces.size()<1){
-      //continue;
-    }else{
-#ifdef DEBUG
-        cv::rectangle(showframe3,cv::Rect(faces[0].x+upperbodies[i].x,faces[0].y+upperbodies[i].y,faces[0].width,faces[0].height),cv::Scalar(0,0,255),3);
-#endif
-    }*/
+
     PreBlob preblob;
     preblob.blob.x=upperbodies[i].x;
     preblob.blob.y=upperbodies[i].y;
@@ -184,6 +174,65 @@ BlobNodeList CBlobDetect::DetectUpperBody2(const cv::Mat frame){
   return currentBlobNodeList;
 }
 
+BlobNodeList CBlobDetect::DetectFace2(const cv::Mat frame){
+  preblob_list.clear();
+#ifdef DEBUG
+  cv::Mat showframe3=frame.clone();
+#endif //DEBUG
+  std::vector<cv::Rect> faces;
+  cv::Mat frame_gray=frame.clone();
+  cv::cvtColor(frame_gray,frame_gray,CV_RGB2GRAY);
+  face_cascade.detectMultiScale(frame_gray,faces,1.1,2,0|CV_HAAR_SCALE_IMAGE,cv::Size(30,30));
+  BlobNodeList currentBlobNodeList;
+  for(unsigned int i=0;i<faces.size();i++){
+    //inorge too big or too small
+    if(faces[i].width>HMAX||
+      faces[i].width<WMIN||
+      faces[i].height>HMAX||
+      faces[i].height<HMIN){
+      continue;
+    }
+
+    PreBlob preblob;
+    preblob.blob.x=faces[i].x;
+    preblob.blob.y=faces[i].y;
+    preblob.blob.w=faces[i].width;
+    preblob.blob.h=faces[i].height;
+    preblob.blob.image=frame(faces[i]).clone();
+    //change pre_index.
+    preblob.pre_index=0;
+    PreBlob previous_preblob=this->FindPreBlobByCurrentPreBlob(preblob);
+    if(previous_preblob.pre_index==PREBLOBNUM+1){
+      preblob.pre_index=PREBLOBNUM+1;
+    }else{
+      preblob.pre_index=(previous_preblob.pre_index)+1;
+    }
+#ifdef DEBUG
+    std::cout<<preblob.pre_index<<std::endl;
+#endif
+    preblob_list.push_back(preblob);
+#ifdef DEBUG
+    if(preblob.pre_index==PREBLOBNUM){
+      cv::rectangle(showframe3,faces[i],cv::Scalar(0,255,0),3);
+    }else{
+      //putText(showframe3,"Male",Point(upperbodies[i].x,upperbodies[i].y-5),FONT_HERSHEY_SIMPLEX,0.5,Scalar(255,0,0),1);
+      cv::rectangle(showframe3,faces[i],cv::Scalar(255,0,0),3);
+    }
+#endif //DEBUG
+    if(preblob.pre_index==PREBLOBNUM){
+      cv::cvtColor(preblob.blob.image,preblob.blob.image,CV_RGB2GRAY);
+      BlobNode blobnode(preblob.blob);
+      currentBlobNodeList.push_back(blobnode);
+    }
+  }
+  pre_preblob_list=preblob_list; //update pre_preblob_list.
+#ifdef DEBUG
+  cv::imshow("detect face2",showframe3);
+#endif //DEBUG
+  return currentBlobNodeList;
+
+}
+
 void CBlobDetect::Init(){
 #ifdef SERVER
   //init HOG detect.
@@ -208,6 +257,7 @@ void CBlobDetect::Init(){
   };
   //init upper body detect.
   std::string upperbody_cascade_name = "../data/haarcascades/haarcascade_mcs_upperbody.xml";
+  //std::string upperbody_cascade_name = "../data/haarcascades/haarcascade_frontalface_alt.xml";
   if( !upperbody_cascade.load(upperbody_cascade_name ) ){
     printf("--(!)Error loading\n");
   };

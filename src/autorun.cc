@@ -23,9 +23,11 @@ void CAutoRun::Process(const cv::Mat frame){
   cv::Mat roi_detect(frame,r);
   cv::Mat roi=roi_detect.clone();
   currentBlobNodeList=blobdetect->DetectUpperBody2(roi);
+  //currentBlobNodeList=blobdetect->DetectFace2(roi);
  
   blobtrack->GetFrame(roi);
   blobtrack->Track2(&existBlobNodeList,currentBlobNodeList);
+  //blobtrack->TrackFace(&existBlobNodeList,currentBlobNodeList);
   endBlobNodeList=blobtrack->GetEndBlobNodeList();
 
   if(endBlobNodeList.size()>0){

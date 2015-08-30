@@ -91,7 +91,9 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
       //Get face image.
       cv::Rect face_rect((*existBlobNodeList)[i].box.x+faces[0].x,(*existBlobNodeList)[i].box.y+faces[0].y,faces[0].width,faces[0].height);
       cv::Mat face_tmp(_frame,face_rect);
-      (*existBlobNodeList)[i].face=face_tmp.clone();
+      if(((*existBlobNodeList)[i].face).empty()){
+        (*existBlobNodeList)[i].face=face_tmp.clone();
+      }
 #ifdef DEBUG
       cv::rectangle(_frame,face_rect,cv::Scalar(0,0,255),3);
 #endif //DEBUG
@@ -137,6 +139,72 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
   cv::imshow("tracking",_frame);
 #endif //DEBUG
 } 
+
+void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlobNodeList){
+  endBlobNodeList.clear();
+
+  //--compressive tracking for each exist blobnode.
+  for(unsigned int i=0;i<existBlobNodeList->size();i++){
+    (*existBlobNodeList)[i].ct->processFrame(gray_frame,(*existBlobNodeList)[i].box);
+    //draw rectangle.
+#ifdef DEBUG
+    cv::rectangle(_frame,(*existBlobNodeList)[i].box,cv::Scalar(0,255,0),3);
+#endif //DEBUG
+
+    //--find end blobnodes , delete from existBlobNodeList and add to endBlobNodeList.
+    if((*existBlobNodeList)[i].box.width==0){
+      endBlobNodeList.push_back((*existBlobNodeList)[i]);
+    }
+
+    //face.
+    cv::Mat face_gray(_frame,(*existBlobNodeList)[i].box);
+    if(((*existBlobNodeList)[i].face).empty()){
+      (*existBlobNodeList)[i].face=face_gray.clone();
+    }
+
+    //update trajectory.
+    (*existBlobNodeList)[i].trajectory.push_back((*existBlobNodeList)[i].box);
+  }
+
+
+  //--find new blobnodes and add to existBlobNodeList.
+  for(unsigned int j=0;j<currentBlobNodeList.size();j++){
+    bool b_new=true;
+    for(unsigned int i=0;i<existBlobNodeList->size();i++){
+      if(this->CompareBlobNode(currentBlobNodeList[j],(*existBlobNodeList)[i])){
+        b_new=false;
+        break;
+      }
+    }
+    if(b_new){
+      currentBlobNodeList[j].ct = new CompressiveTracker();
+      currentBlobNodeList[j].ct->init(gray_frame,currentBlobNodeList[j].box);
+      (*existBlobNodeList).push_back(currentBlobNodeList[j]);
+    }
+  }
+
+  //--remove end blobnodes from exist blobnodes.
+  std::vector<BlobNode>::iterator it=existBlobNodeList->begin();
+  while(it!=existBlobNodeList->end()){
+    if(((it->box.x+it->box.width)>_frame.cols-10)||
+       it->box.x<10||
+       ((it->box.y+it->box.height)>_frame.rows-10)||
+       it->box.y<10||
+       (it->trajectory).size()>MAXCOUNT){
+      if((it->trajectory).size()>MINCOUNT){
+        endBlobNodeList.push_back(*it);
+      }
+      it=existBlobNodeList->erase(it);
+      //++it;
+    }else{
+      ++it;
+    }
+  }
+#ifdef DEBUG
+  cv::imshow("tracking",_frame);
+#endif //DEBUG
+
+}
 
 //Compare two blobs for tracking.
 //Step 1 : Compare by distance.

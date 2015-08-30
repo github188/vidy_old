@@ -42,6 +42,8 @@ public:
   //at the same time.
   //@return : new blobnode list.
   BlobNodeList DetectUpperBody2(const cv::Mat frame);
+
+  BlobNodeList DetectFace2(const cv::Mat frame);
   
 protected:
   void Init();

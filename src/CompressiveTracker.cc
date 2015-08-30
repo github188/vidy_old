@@ -11,7 +11,7 @@ CompressiveTracker::CompressiveTracker(void)
 	featureMaxNumRect = 4;	// number of rectangle from 2 to 4
 	featureNum = 50;	// number of all weaker classifiers, i.e,feature pool
 	rOuterPositive = 4;	// radical scope of positive samples
-	rSearchWindow = 25; // size of search window
+	rSearchWindow = 40; // size of search window
 	muPositive = vector<float>(featureNum, 0.0f);
 	muNegative = vector<float>(featureNum, 0.0f);
 	sigmaPositive = vector<float>(featureNum, 1.0f);

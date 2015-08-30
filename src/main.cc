@@ -14,6 +14,10 @@
 
 void help(){
   printf("please enter database name, camera id, read address and camera type.\n");
+  printf("type 1 : entrance type. \n");
+  printf("type 2 : fullview/birdview type. \n");
+  printf("type 3 : key area type. \n");
+  printf("type 4 : real-time entrance type. \n");
 }
 
 //@param argv[1]:database name.
@@ -66,7 +70,10 @@ int main(int argc,char* argv[]){
   if(g_calibrate.size()>1){
     g_calibrate.erase(g_calibrate.end());
   }
-  
+
+#ifdef DEBUG
+  std::cout<<g_calibrate.size()<<std::endl;
+#endif
   //--Init processing class.
   vidy::IAutoRun* pAutoRun;
   

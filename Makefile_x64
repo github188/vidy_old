@@ -9,7 +9,7 @@ DIR_3RD=./3rdparty
 #opencv
 DIR_3RD_OPENCV=${DIR_3RD}/opencv
 DIR_3RD_OPENCV2=${DIR_3RD}/opencv2
-DIR_LIB_OPENCV=${DIR_LIB}/lib_opencv2.4.9_x64
+DIR_LIB_OPENCV=${DIR_LIB}/lib_opencv-2.4.11_without_ffmpeg
 #mysql
 DIR_3RD_MYSQL=${DIR_3RD}/mysql
 DIR_LIB_MYSQL=${DIR_LIB}/lib_mysql6.1.6_x64

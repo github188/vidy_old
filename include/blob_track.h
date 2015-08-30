@@ -26,6 +26,7 @@ public:
   void Track(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlobNodeList);
 
   //Note. Use compressive tracking.
+  //Track uppper body and find its face.
   void Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlobNodeList);
 
   BlobNodeList GetEndBlobNodeList(){
@@ -36,6 +37,10 @@ public:
     _frame=frame.clone();
     cv::cvtColor(frame,gray_frame,CV_RGB2GRAY);
   };
+  
+  //Note. Track face directly.
+  void TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlobNodeList);
+
 protected:
   int CompareBlobNode(BlobNode blobnode,BlobNode compareblobnode);
 private:
