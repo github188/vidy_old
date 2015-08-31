@@ -17,34 +17,13 @@ namespace vidy{
 CBlobGenerate::CBlobGenerate(){
   genderdetect = new GenderDetect();
   ageestimate = new AgeEstimate();
-
+#ifdef TESTVIEW
+  dbmysql = new IDBMySQL();
+#endif // TESTVIEW
 }
 
 CBlobGenerate::~CBlobGenerate(){
 
-}
-
-void CBlobGenerate::Generate(BlobNodeList& endBlobNodeList){
-  //get file name.
-  std::string filename=g_data_path;
-  filename +="cid";
-  filename +=g_cid;
-  //TODO:seperate file by day.
-  filename +="/counting/count.dat";
-#ifdef DEBUG
-  std::cout<<filename<<std::endl;
-#endif //DEBUG
-  std::ofstream outfile("count.dat",std::ios::app);
-  for(unsigned int i=0;i<endBlobNodeList.size();i++){
-    PtrBlobNode pBlobNode;
-    pBlobNode=&(endBlobNodeList[i]);
-    while(pBlobNode->prev!=NULL){
-      outfile<<pBlobNode->blob.id<<" ";
-      pBlobNode=pBlobNode->prev;
-    }
-    outfile<<std::endl;
-  }
-  outfile.close();
 }
 
 void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
@@ -71,11 +50,6 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
       endBlobNodeList[i].direction=0;
     }
 
-    //--record data to local file.
-#ifdef TESTVIEW
-    std::ofstream outfile("/var/www/html/testview.txt",std::ios::app);
-#else
-
 #ifdef SERVER
     std::string file="/usr/local/vidy/result/";
 #else
@@ -88,7 +62,7 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     file += g_time;
     file += ".dat";
     std::ofstream outfile(file.data(),std::ios::app);
-#endif // TESTVIEW
+
     g_count++;
 
     if(endBlobNodeList[i].gender==2){
@@ -104,5 +78,24 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     //--update realtime data.    
   }
 }
+
+#ifdef TESTVIEW
+void CBlobGenerate::GenerateTestView(BlobNodeList& endBlobNodeList){
+  for(unsigned int i=0;i<endBlobNodeList.size();i++){
+    cv::Mat face_gray;
+    cv::cvtColor(endBlobNodeList[i].face,face_gray,CV_RGB2GRAY);
+    endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
+    endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
+#ifdef DEBUG
+    std::cout<<"insert data..."<<std::endl;
+#endif
+    char sql[100];
+    sprintf(sql, "insert into t_data_realtime(count,gender,age,pathway) values('1','%d','%d','1')",endBlobNodeList[i].gender,endBlobNodeList[i].age);
+    dbmysql->InsertData(sql);
+    
+  }
+
+} // generate testview.
+#endif
 
 } //namespace vidy

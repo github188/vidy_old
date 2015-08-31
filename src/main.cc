@@ -12,6 +12,79 @@
 #include "global.h"
 #include "autorun.h"
 
+#ifdef TESTVIEW  // for test view
+void help(){
+  printf("please enter video address.\n");
+}
+
+//@param argv[1]:read address.
+//@param argv[2]:camera type.
+int main(int argc,char* argv[]){
+  if(argc==2){
+    g_type=1;
+  }else if(argc==1){
+    help();
+    return 0;  
+  }else{
+    g_type=atoi(argv[2]);
+  }
+  g_dbname="realtime";
+  
+  cv::VideoCapture capture(argv[1]);
+  if(!capture.isOpened()){
+    std::cout<<"remote address error!"<<std::endl;
+  }
+  
+  char key;
+  cv::Mat frame;
+ 
+  //--Init processing class.
+  vidy::IAutoRun* pAutoRun;
+
+  switch(g_type){
+    case 1:
+      pAutoRun = new vidy::CAutoRunTestView1();
+      break;
+    default:
+      return 0;
+  }
+
+  while(key!=27){
+    double begin_time=clock();
+ 
+    capture.read(frame);
+
+    if(frame.empty()){
+        usleep(1000000);
+        std::cout<<"no frame"<<std::endl;
+        continue;
+    }
+
+    cv::imshow("frame",frame);
+
+    pAutoRun->Process(frame);
+
+    double finish_time=clock();
+
+    double duration=(finish_time-begin_time)/CLOCKS_PER_SEC;
+
+    int wait_time=(double)(1000.00f/FPS)-duration*1000.00f;
+
+    if(wait_time<10){
+      key=cv::waitKey(1);
+    }else{
+      key=cv::waitKey(wait_time);
+    }
+
+  }
+  delete pAutoRun;
+  return 0;
+}
+
+
+
+
+#else // for normal
 void help(){
   printf("please enter database name, camera id, read address and camera type.\n");
   printf("type 1 : entrance type. \n");
@@ -163,3 +236,4 @@ int main(int argc,char* argv[]){
   return 1;
 } // main
 
+#endif //TESTVIEW

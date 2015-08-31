@@ -75,6 +75,22 @@ public:
   virtual void Process(const cv::Mat frame);
 }; //class CAutoRun3
 
+class CAutoRunTestView1 : public IAutoRun{
+public:
+  CAutoRunTestView1();
+  ~CAutoRunTestView1();
+  virtual void Process(const cv::Mat frame);
+protected:
+  void Init();
+private:
+  CBlobDetect* blobdetect;
+  CBlobTrack* blobtrack;
+  CBlobGenerate* blobgenerate;
+  BlobNodeList existBlobNodeList;
+  BlobNodeList currentBlobNodeList;
+  BlobNodeList endBlobNodeList;
+}; //class CAutoRunTestView1
+
 } //namespace vidy
 
 #endif //VIDY_INC_AUTORUN_H_

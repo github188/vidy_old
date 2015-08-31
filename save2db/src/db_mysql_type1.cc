@@ -4,6 +4,7 @@
 
 #include "db_mysql.h"
 #include <stdio.h>
+#include <iostream>
 
 namespace vidy{
 
@@ -23,7 +24,20 @@ CDBMySQL1::CDBMySQL1(){
   printf("%s\n",pathway_filename.data());
 #endif
 
-  //--get pathway data/
+  //--get pathway data from database/
+  char sql[100];
+  sprintf(sql,"select path from t_calibration where cid='%d' and type='2'",g_cid);
+  std::vector<std::vector<std::string> > res = this->GetData(sql);
+  for(unsigned int i=0; i<res.size();i++){
+    char path_str[100];
+    sscanf(res[i].data(),"GeomFromText('MULTIPOINT(%s)',0)",path_str);
+    for(unsigned int j=0;j<strlen(path_str);++j){
+      if(path_str[j]==','){
+        
+      }
+    }
+  }
+
   std::ifstream inFile2(pathway_filename.data(),std::ios::in);
   while(!inFile2.eof()){
     cv::Point p1,p2,p3;
@@ -110,6 +124,7 @@ void CDBMySQL1::Save2DB(){
         break;
     }
     //--age.
+    _age = ramdom(40)+20;
     switch((int)(_age/10)){
       case 0:
         age_1++;
@@ -176,8 +191,8 @@ void CDBMySQL1::SavePathway(){
     percentage_2 = 100*(direct_2/total);
     percentage_3 = 100-(percentage_1+percentage_2);
   }
-  for(unsigned int i=0;i<3;i++){
-    std::string sql = "insert into t_data_path_result(cid,date,time,path,percentage) values('";
+  for(unsigned int i=0;i<pathways.size();i++){
+    std::string sql = "insert into t_data_path_result(cid,date,time,path,num,percentage) values('";
     char ccid[10];
     sprintf(ccid,"%d",g_cid);
     sql += ccid;
@@ -190,6 +205,7 @@ void CDBMySQL1::SavePathway(){
     sprintf(points,"%d %d,%d %d,%d %d",pathways[i][0].x,pathways[i][0].y,pathways[i][1].x,pathways[i][1].y,pathways[i][2].x,pathways[i][2].y);
     sql += points;
     sql += ")',0),'";
+
     char cpercentage[10];
     switch(i){
       case 0:
