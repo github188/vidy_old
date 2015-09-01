@@ -9,50 +9,41 @@
 namespace vidy{
 
 CDBMySQL1::CDBMySQL1(){
-#ifdef SERVER
-  pathway_filename = "/usr/local/vidy/calibration/";
-#else
-  pathway_filename = "../../calibration/";
-#endif // SERVER
-  pathway_filename += g_dbname;
-  pathway_filename += "-cid";
-  char ccid[10];
-  sprintf(ccid,"%d",g_cid);
-  pathway_filename += ccid;
-  pathway_filename += "-pathway.dat";
-#ifdef DEBUG
-  printf("%s\n",pathway_filename.data());
-#endif
-
   //--get pathway data from database/
   char sql[100];
-  sprintf(sql,"select path from t_calibration where cid='%d' and type='2'",g_cid);
+  sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%d' and typeid='2'",g_cid);
   std::vector<std::vector<std::string> > res = this->GetData(sql);
   for(unsigned int i=0; i<res.size();i++){
-    char path_str[100];
-    sscanf(res[i].data(),"GeomFromText('MULTIPOINT(%s)',0)",path_str);
-    for(unsigned int j=0;j<strlen(path_str);++j){
-      if(path_str[j]==','){
-        
-      }
-    }
-  }
-
-  std::ifstream inFile2(pathway_filename.data(),std::ios::in);
-  while(!inFile2.eof()){
-    cv::Point p1,p2,p3;
-    inFile2>>p1.x>>p1.y>>p2.x>>p2.y>>p3.x>>p3.y;
     std::vector<cv::Point> pathway;
-    pathway.push_back(p1);
-    pathway.push_back(p2);
-    pathway.push_back(p3);
+    char path_str[100]="";
+    sscanf(res[i][0].data(),"MULTIPOINT(%[^)])",path_str);
+    const char* split=", ";
+    char* p;
+    p=strtok(path_str,split);
+    int _count=0;
+    cv::Point point;
+    while(p!=NULL){
+      _count++;
+      if(_count%2==1){
+        //x
+        point.x=atoi(p);
+      }else{
+        //y
+        point.y=atoi(p);
+        pathway.push_back(point);
+      }
+      p=strtok(NULL,split);
+    }
     pathways.push_back(pathway);
   }
-  pathways.erase(pathways.end());
-  inFile2.close();
 #ifdef DEBUG
-  printf("pathway size : %d\n",pathways.size());
-#endif  
+  for(unsigned int k=0;k<pathways.size();k++){
+    for(unsigned int n=0;n<pathways[k].size();n++){
+      std::cout<<pathways[k][n].x<<" "<<pathways[k][n].y<<" ";
+    }
+    std::cout<<std::endl;
+  }
+#endif // DEBUG
 }
 
 CDBMySQL1::~CDBMySQL1(){
@@ -82,9 +73,8 @@ void CDBMySQL1::Save2DB(){
   count=0;
   female=0;
   male=0;
-  direct_1=0;
-  direct_2=0;
-  direct_3=0;
+  std::vector<int> _directions(pathways.size());
+  directions = _directions;
   age_1=0; //<20
   age_2=0; //21-30
   age_3=0; //31-40
@@ -112,19 +102,9 @@ void CDBMySQL1::Save2DB(){
       female++;
     }
     //--direciton.
-    switch(_direction){
-      case 1:
-        direct_1++;
-        break;
-      case 2:
-        direct_2++;
-        break;
-      case 3:
-        direct_3++;
-        break;
-    }
+    (directions[_direction-1])++;
     //--age.
-    _age = ramdom(40)+20;
+    _age = random(40)+20;
     switch((int)(_age/10)){
       case 0:
         age_1++;
@@ -157,11 +137,10 @@ void CDBMySQL1::Save2DB(){
   this->SaveCount();
 
 #ifdef DEBUG
-  printf("SavePathway()..\n");
+  printf("\nSavePathway()..\n");
 #endif // DEBUG
   
-  //note. web server is not ready. 
-  //this->SavePathway();
+  this->SavePathway();
 
 }
 
@@ -177,21 +156,14 @@ void CDBMySQL1::SaveCount(){
 }
 
 void CDBMySQL1::SavePathway(){
-  float percentage_1;
-  float percentage_2;
-  float percentage_3;
-  int total=direct_1+direct_2;
-  total += direct_3;
-  if(total==0){
-    percentage_1 = 30;
-    percentage_2 = 30;
-    percentage_3 = 40;
-  }else{
-    percentage_1 = 100*(direct_1/total);
-    percentage_2 = 100*(direct_2/total);
-    percentage_3 = 100-(percentage_1+percentage_2);
-  }
+  //compute total directions number.
+  int direction_total = 0;
+  for(unsigned int i=0;i<directions.size();i++){
+    direction_total += directions[i];
+  }  
+
   for(unsigned int i=0;i<pathways.size();i++){
+
     std::string sql = "insert into t_data_path_result(cid,date,time,path,num,percentage) values('";
     char ccid[10];
     sprintf(ccid,"%d",g_cid);
@@ -201,29 +173,34 @@ void CDBMySQL1::SavePathway(){
     sql += "','";
     sql += g_time;
     sql += ":00:00',GeomFromText('MULTIPOINT(";
-    char points[100];
-    sprintf(points,"%d %d,%d %d,%d %d",pathways[i][0].x,pathways[i][0].y,pathways[i][1].x,pathways[i][1].y,pathways[i][2].x,pathways[i][2].y);
+
+    std::string points;
+    for(unsigned int j=0;j<pathways[i].size();j++){
+      char point[50];
+      sprintf(point,"%d %d",pathways[i][j].x,pathways[i][j].y);
+      points += point;
+      if(j!=pathways[i].size()-1){
+        points += ",";
+      }
+    }    
     sql += points;
     sql += ")',0),'";
 
+    char cdirection[10];
+    sprintf(cdirection,"%d",directions[i]);    
+    sql += cdirection;
+    sql += "','";
+     
     char cpercentage[10];
-    switch(i){
-      case 0:
-        sprintf(cpercentage,"%f",percentage_1);
-        break;
-      case 1:
-        sprintf(cpercentage,"%f",percentage_2);
-        break;
-      case 2:
-        sprintf(cpercentage,"%f",percentage_3);
-        break;
-    }
+    sprintf(cpercentage,"%.2f",100.00f*directions[i]/direction_total);
     sql += cpercentage;
     sql += "')";
+
 #ifdef DEBUG
     printf("%s\n",sql.data());
 #endif //DEBUG
     this->InsertData(sql.data());
+
   }
 }
 

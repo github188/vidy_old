@@ -65,9 +65,7 @@ class CDBMySQL1 : public IDBMySQL{
     int count;
     int female;
     int male;
-    int direct_1;
-    int direct_2;
-    int direct_3;
+    std::vector<int> directions;
     int age_1;
     int age_2;
     int age_3;

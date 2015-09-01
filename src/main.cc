@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include "global.h"
 #include "autorun.h"
+#include "db_mysql.h"
 
 #ifdef TESTVIEW  // for test view
 void help(){
@@ -28,7 +29,7 @@ int main(int argc,char* argv[]){
   }else{
     g_type=atoi(argv[2]);
   }
-  g_dbname="realtime";
+  g_dbname2="realtime";
   
   cv::VideoCapture capture(argv[1]);
   if(!capture.isOpened()){
@@ -105,9 +106,41 @@ int main(int argc,char* argv[]){
   }
 
   g_dbname=argv[1];
+  g_dbname2=argv[2];
   g_cid=argv[2];
   g_type=atoi(argv[4]);
-    
+
+  IDBMySQL* dbmysql = new IDBMySQL();
+  //--get calibration data from database/
+  char sql[100];
+  if(g_type){
+    //--type 1 : entrance type /
+    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%d' and typeid='1'",g_cid);
+  }else{
+    //--type 2,3 : roi area data /
+    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%d' and typeid='3'",g_cid);
+  }
+  std::vector<std::vector<std::string> > res = dbmysql->GetData(sql);
+  char str[100]="";
+  sscanf(res[0][0].data(),"MULTIPOINT(%[^)])",str);
+  const char* split=", ";
+  char* p;
+  p=strtok(str,split);
+  int _count = 0;
+  cv::Point point;
+  while(p!=NULL){
+    _count++;
+    if(_count%2==1){
+      //x
+      point.x=atoi(p);
+    }else{
+      point.y=atoi(p);
+      g_calibration.push_back(point);
+    }
+    p=strtok(NULL,split);
+  }
+  
+/*  
   //--get calibrated data.
 #ifdef SERVER
   std::string filename="/usr/local/vidy/calibration/";
@@ -143,7 +176,7 @@ int main(int argc,char* argv[]){
   if(g_calibrate.size()>1){
     g_calibrate.erase(g_calibrate.end());
   }
-
+*/
 #ifdef DEBUG
   std::cout<<g_calibrate.size()<<std::endl;
 #endif

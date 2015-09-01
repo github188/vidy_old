@@ -8,4 +8,4 @@
 char* g_dbaddr="123.59.47.111";
 char* g_dbuser="admin";
 char* g_dbpswd="admin";
-char* g_dbname2="realtime";
+char* g_dbname2="";
