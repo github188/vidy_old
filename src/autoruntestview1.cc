@@ -34,9 +34,11 @@ void CAutoRunTestView1::Process(const cv::Mat frame){
   blobtrack->TrackFace(&existBlobNodeList,currentBlobNodeList);
   endBlobNodeList=blobtrack->GetEndBlobNodeList();
 
+#ifdef TESTVIEW
   if(endBlobNodeList.size()>0){
     blobgenerate->GenerateTestView(endBlobNodeList);
   }
+#endif // TESTVIEW
   return ;
 }
 

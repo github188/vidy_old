@@ -82,10 +82,9 @@ int main(int argc,char* argv[]){
   return 0;
 }
 
+#endif // TESTVIEW
 
-
-
-#else // for normal
+#ifdef NORMAL
 void help(){
   printf("please enter database name, camera id, read address and camera type.\n");
   printf("type 1 : entrance type. \n");
@@ -106,19 +105,19 @@ int main(int argc,char* argv[]){
   }
 
   g_dbname=argv[1];
-  g_dbname2=argv[2];
+  g_dbname2=argv[1];
   g_cid=argv[2];
   g_type=atoi(argv[4]);
 
-  IDBMySQL* dbmysql = new IDBMySQL();
+  vidy::IDBMySQL* dbmysql = new vidy::IDBMySQL();
   //--get calibration data from database/
   char sql[100];
   if(g_type){
     //--type 1 : entrance type /
-    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%d' and typeid='1'",g_cid);
+    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='1'",g_cid);
   }else{
     //--type 2,3 : roi area data /
-    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%d' and typeid='3'",g_cid);
+    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='3'",g_cid);
   }
   std::vector<std::vector<std::string> > res = dbmysql->GetData(sql);
   char str[100]="";
@@ -134,52 +133,18 @@ int main(int argc,char* argv[]){
       //x
       point.x=atoi(p);
     }else{
+      //y
       point.y=atoi(p);
-      g_calibration.push_back(point);
+      g_calibrate.push_back(point);
     }
     p=strtok(NULL,split);
   }
-  
-/*  
-  //--get calibrated data.
-#ifdef SERVER
-  std::string filename="/usr/local/vidy/calibration/";
-#else
-  std::string filename="../calibration/"; 
-#endif // SERVER
-  filename += g_dbname;
-  filename += "-cid";
-  filename += g_cid;
-  filename += ".dat";
-  std::ifstream inFile(filename.data(),std::ios::in);
-
-  //default calibrate.
-  if(!inFile.is_open()){
-    cv::Point point1(0,0);
-    cv::Point point2(1280,0);
-    cv::Point point3(1280,720);
-    cv::Point point4(0,720);
-    g_calibrate.push_back(point1);
-    g_calibrate.push_back(point2);
-    g_calibrate.push_back(point3);
-    g_calibrate.push_back(point4);
-  }else{
-    while(!inFile.eof()){
-      cv::Point point;
-      inFile>>point.x>>point.y;
-      g_calibrate.push_back(point);
-    }
-  }
-  inFile.close();
-
-  //delete last data as it's empty.
-  if(g_calibrate.size()>1){
-    g_calibrate.erase(g_calibrate.end());
-  }
-*/
 #ifdef DEBUG
-  std::cout<<g_calibrate.size()<<std::endl;
+  for(unsigned int j=0;j<g_calibrate.size();j++){
+    std::cout<<"Point:"<<g_calibrate[j].x<<" "<<g_calibrate[j].y<<std::endl;
+  }
 #endif
+  
   //--Init processing class.
   vidy::IAutoRun* pAutoRun;
   
@@ -208,12 +173,10 @@ int main(int argc,char* argv[]){
       printf("camera type haven't exist\n");
       return 0;
   }
-
   cv::VideoCapture capture(argv[3]);
   if(!capture.isOpened()){
     std::cout<<"remote address error!"<<std::endl;
   }
-
   char key;
   cv::Mat frame; 
   time_t t; //localtime.
@@ -269,4 +232,4 @@ int main(int argc,char* argv[]){
   return 1;
 } // main
 
-#endif //TESTVIEW
+#endif //NORMAL

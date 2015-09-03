@@ -64,6 +64,7 @@ int IDBMySQL::InitMySQL(){
     return 0;
   }else{
     printf("Connect to Mysql successfully!\n");
+    printf("database:%s\n",g_dbname2);
     mysql_query(&mysql,"set names utf8");
     return 1;
   }

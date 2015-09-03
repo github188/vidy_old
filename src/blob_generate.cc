@@ -6,7 +6,8 @@
 #include "global.h"
 #include <fstream>
 #include <opencv2/highgui/highgui.hpp>
-
+#include <openbr/openbr.h>
+#include <openbr/openbr_plugin.h>
 #include "stdlib.h"
 #include "stdio.h"
 
@@ -20,10 +21,12 @@ CBlobGenerate::CBlobGenerate(){
 #ifdef TESTVIEW
   dbmysql = new IDBMySQL();
 #endif // TESTVIEW
+  int argc=0;
+  br::Context::initialize((int&)argc,NULL,"",false);
 }
 
 CBlobGenerate::~CBlobGenerate(){
-
+  br::Context::finalize();
 }
 
 void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
@@ -32,8 +35,19 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     if(!(endBlobNodeList[i].face.empty())){
       cv::Mat face_gray;
       cv::cvtColor(endBlobNodeList[i].face,face_gray,CV_RGB2GRAY);
-      endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
-      endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
+      //endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
+      //endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
+
+      //br::Template query(face_gray);
+      //QSharedPointer<br::Transform> transform = br::Transform::fromAlgorithm("AgeEstimation");
+      //query>>*transform;
+      //endBlobNodeList[i].age = (int)query.file.get<float>("Age");
+      /*query>>*(br::Transform::fromAlgorithm("GenderEstimation"));
+      if(query.file.get<QString>("Gender")=="女"){
+        endBlobNodeList[i].gender=0;
+      }else{
+        endBlobNodeList[i].gender=1;
+      }*/
     }
     
     //--direction detect.

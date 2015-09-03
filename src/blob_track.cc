@@ -3,9 +3,9 @@
 //Author:Yun Luo(lauren.luo@extremevision.mo)
 
 #include "blob_track.h"
-#ifdef DEBUG
 #include <iostream>
-#endif //DEBUG
+#include <openbr/openbr.h>
+#include <openbr/openbr_plugin.h>
 
 #define MAXCOUNT 100
 
@@ -162,7 +162,21 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
     //face.
     cv::Mat face_gray(_frame,(*existBlobNodeList)[i].box);
     if(((*existBlobNodeList)[i].face).empty()){
-      (*existBlobNodeList)[i].face=face_gray.clone();
+      int x,y,w,h;
+      x=((*existBlobNodeList)[i].box.x-20)<0?0:((*existBlobNodeList)[i].box.x-20);
+      y=((*existBlobNodeList)[i].box.y-20)<0?0:((*existBlobNodeList)[i].box.y-20);
+      w=(*existBlobNodeList)[i].box.width+40;
+      h=(*existBlobNodeList)[i].box.height+40;
+      cv::Rect rect(x,y,w,h);
+      (*existBlobNodeList)[i].face=_frame(rect).clone();
+      br::Template query((*existBlobNodeList)[i].face);
+      QSharePointer<br::Transform> transform  = br::Transform::fromAlgorithm("AgeEstimation");
+      query>>*transform;
+      endBlobNodeList[i].age = (int)query.file.get<float>("Age"); 
+      query>>*(br::Transform::fromAlgorithm("GenderEstimation")); 
+#ifdef DEBUG
+      cv::imshow("face",(*existBlobNodeList)[i].face);
+#endif // DEBUG
     }
 
     //update trajectory.
