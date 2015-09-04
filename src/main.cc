@@ -82,9 +82,7 @@ int main(int argc,char* argv[]){
   return 0;
 }
 
-#endif // TESTVIEW
-
-#ifdef NORMAL
+#else // TESTVIEW
 void help(){
   printf("please enter database name, camera id, read address and camera type.\n");
   printf("type 1 : entrance type. \n");
@@ -208,7 +206,7 @@ int main(int argc,char* argv[]){
       cv::imshow("frame",frame);
 #endif //DEBUG
 
-      if(hour>=8 && hour<21){
+      if(hour>=8 && hour<23){
         //--process runs.
         pAutoRun->Process(frame);
       }

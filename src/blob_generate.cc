@@ -6,8 +6,6 @@
 #include "global.h"
 #include <fstream>
 #include <opencv2/highgui/highgui.hpp>
-#include <openbr/openbr.h>
-#include <openbr/openbr_plugin.h>
 #include "stdlib.h"
 #include "stdio.h"
 
@@ -21,12 +19,9 @@ CBlobGenerate::CBlobGenerate(){
 #ifdef TESTVIEW
   dbmysql = new IDBMySQL();
 #endif // TESTVIEW
-  int argc=0;
-  br::Context::initialize((int&)argc,NULL,"",false);
 }
 
 CBlobGenerate::~CBlobGenerate(){
-  br::Context::finalize();
 }
 
 void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){

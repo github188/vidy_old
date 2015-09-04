@@ -7,6 +7,7 @@
 #include <openbr/openbr.h>
 #include <openbr/openbr_plugin.h>
 
+
 #define MAXCOUNT 100
 
 #define MINCOUNT 3
@@ -25,9 +26,12 @@ CBlobTrack::CBlobTrack(){
   if(!face_cascade.load(face_cascade_name)){
     printf("--(!)Error loading(face detect)\n");
   };
+  int argc=0;
+  br::Context::initialize((int&)argc,NULL);
 }
 
 CBlobTrack::~CBlobTrack(){
+  br::Context::finalize();
   delete blobcompare;
 }
 
@@ -151,7 +155,7 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
     (*existBlobNodeList)[i].ct->processFrame(gray_frame,(*existBlobNodeList)[i].box);
     //draw rectangle.
 #ifdef DEBUG
-    cv::rectangle(_frame,(*existBlobNodeList)[i].box,cv::Scalar(0,255,0),3);
+    //cv::rectangle(_frame,(*existBlobNodeList)[i].box,cv::Scalar(0,255,0),3);
 #endif //DEBUG
 
     //--find end blobnodes , delete from existBlobNodeList and add to endBlobNodeList.
@@ -168,15 +172,19 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
       w=(*existBlobNodeList)[i].box.width+40;
       h=(*existBlobNodeList)[i].box.height+40;
       cv::Rect rect(x,y,w,h);
-      (*existBlobNodeList)[i].face=_frame(rect).clone();
-      br::Template query((*existBlobNodeList)[i].face);
-      QSharePointer<br::Transform> transform  = br::Transform::fromAlgorithm("AgeEstimation");
-      query>>*transform;
-      endBlobNodeList[i].age = (int)query.file.get<float>("Age"); 
-      query>>*(br::Transform::fromAlgorithm("GenderEstimation")); 
+      cv::Mat f;
+      _frame(rect).copyTo(f);
+      (*existBlobNodeList)[i].face=f;
+      br::Template query("../data/view.jpg");
+      QSharedPointer<br::Transform> transform  = br::Transform::fromAlgorithm("AgeEstimation");
+      query >> *transform;
+      //if(query.file.get<float>("Age")!=NULL){
+      //endBlobNodeList[i].age = (int)query.file.get<float>("Age"); 
+      //query>>*(br::Transform::fromAlgorithm("GenderEstimation")); 
 #ifdef DEBUG
       cv::imshow("face",(*existBlobNodeList)[i].face);
 #endif // DEBUG
+      //}
     }
 
     //update trajectory.
