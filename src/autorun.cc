@@ -42,8 +42,17 @@ void CAutoRun::Process(const cv::Mat frame){
 
 void CAutoRun::Init(){
   blobdetect=new CBlobDetect();
+#ifdef DEBUG
+  std::cout<<"CBlobDetect() finish.."<<std::endl;
+#endif
   blobtrack=new CBlobTrack();
+#ifdef DEBUG
+  std::cout<<"CBlobTrack() finish.."<<std::endl;
+#endif
   blobgenerate=new CBlobGenerate();
+#ifdef DEBUG
+  std::cout<<"CBlobGenerate) finish.."<<std::endl;
+#endif
 }
 
 } //namespace vidy

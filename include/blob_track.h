@@ -15,6 +15,8 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
+#include <openbr/openbr.h>
+#include <openbr/openbr_plugin.h>
 
 namespace vidy{
 
@@ -54,6 +56,10 @@ private:
 
   //face detect.
   cv::CascadeClassifier face_cascade;
+
+  //transforms
+  QSharedPointer<br::Transform> transform_age;
+  QSharedPointer<br::Transform> transform_gender;  
 
 }; //class CBlobTrack
 

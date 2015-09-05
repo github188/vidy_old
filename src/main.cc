@@ -13,6 +13,9 @@
 #include "autorun.h"
 #include "db_mysql.h"
 
+#include <openbr/openbr.h>
+#include <openbr/openbr_plugin.h>
+
 #ifdef TESTVIEW  // for test view
 void help(){
   printf("please enter video address.\n");
@@ -154,7 +157,8 @@ int main(int argc,char* argv[]){
         printf("type 1 calibrated data must be two points.\n");
         return 0;
       }
-      pAutoRun = new vidy::CAutoRun();
+      //br::Context::initialize(argc,argv);
+      //pAutoRun = new vidy::CAutoRun();
       break;
 
     //type 2 : for birdview or fullview.
@@ -208,7 +212,13 @@ int main(int argc,char* argv[]){
 
       if(hour>=8 && hour<23){
         //--process runs.
-        pAutoRun->Process(frame);
+        //pAutoRun->Process(frame);
+        br::Context::initialize(argc,argv,"/home/extremevision1/Work/openbr");
+        QSharedPointer<br::Transform> transform = br::Transform::fromAlgorithm("AgeEstimation");
+        br::Template queryA("/home/extremevision1/Work/openbr/data/MEDS/img/S354-01-t10_01.jpg");
+        queryA >> *transform;
+        std::cout<<queryA.file.get<float>("Age")<<std::endl;
+        return 0;
       }
 
       double finish_time=clock();
@@ -225,7 +235,10 @@ int main(int argc,char* argv[]){
         key=cv::waitKey(wait_time);
       }
   }
-  delete pAutoRun;
+  if(g_type==1){
+    br::Context::finalize();
+  }
+  //delete pAutoRun;
 
   return 1;
 } // main

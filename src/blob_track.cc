@@ -26,12 +26,11 @@ CBlobTrack::CBlobTrack(){
   if(!face_cascade.load(face_cascade_name)){
     printf("--(!)Error loading(face detect)\n");
   };
-  int argc=0;
-  br::Context::initialize((int&)argc,NULL);
+  transform_age = br::Transform::fromAlgorithm("AgeEstimation");
+  transform_gender = br::Transform::fromAlgorithm("GenderEstimation");
 }
 
 CBlobTrack::~CBlobTrack(){
-  br::Context::finalize();
   delete blobcompare;
 }
 
@@ -175,11 +174,16 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
       cv::Mat f;
       _frame(rect).copyTo(f);
       (*existBlobNodeList)[i].face=f;
-      br::Template query("../data/view.jpg");
-      QSharedPointer<br::Transform> transform  = br::Transform::fromAlgorithm("AgeEstimation");
-      query >> *transform;
+      f = cv::imread("/home/extremevision1/Work/vidy/data/family.jpg");
+      br::Template query(f);
+      //transform_age = br::Transform::fromAlgorithm("AgeEstimation");
+      query >> *transform_age;
+      query >> *transform_gender;
       //if(query.file.get<float>("Age")!=NULL){
-      //endBlobNodeList[i].age = (int)query.file.get<float>("Age"); 
+      endBlobNodeList[i].age = (int)query.file.get<float>("Age"); 
+#ifdef DEBUG
+      std::cout<<endBlobNodeList[i].age<<std::endl;
+#endif // DEBUG
       //query>>*(br::Transform::fromAlgorithm("GenderEstimation")); 
 #ifdef DEBUG
       cv::imshow("face",(*existBlobNodeList)[i].face);
