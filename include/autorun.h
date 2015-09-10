@@ -30,6 +30,9 @@ public:
   virtual void Process(const cv::Mat frame);
 protected:
   void Init();
+  void GetROI();
+  //TODO:Get Pathways.
+  void GetPathways();
 private:
   CBlobDetect* blobdetect;
   CBlobTrack* blobtrack;
@@ -37,6 +40,7 @@ private:
   BlobNodeList existBlobNodeList;
   BlobNodeList currentBlobNodeList;
   BlobNodeList endBlobNodeList;
+  cv::Rect roi_rect;
 }; //class CAutoRun
 
 class CAutoRun2 : public IAutoRun{
@@ -73,15 +77,10 @@ public:
   CAutoRun3();
   ~CAutoRun3();
   virtual void Process(const cv::Mat frame);
-}; //class CAutoRun3
-
-class CAutoRunTestView1 : public IAutoRun{
-public:
-  CAutoRunTestView1();
-  ~CAutoRunTestView1();
-  virtual void Process(const cv::Mat frame);
 protected:
   void Init();
+  //TODO:Get Pathways.
+  void GetPathways();
 private:
   CBlobDetect* blobdetect;
   CBlobTrack* blobtrack;
@@ -89,7 +88,7 @@ private:
   BlobNodeList existBlobNodeList;
   BlobNodeList currentBlobNodeList;
   BlobNodeList endBlobNodeList;
-}; //class CAutoRunTestView1
+}; //class CAutoRun3
 
 } //namespace vidy
 

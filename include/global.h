@@ -15,19 +15,27 @@
 //default lowest staytime(seconds).
 #define LOWEST_STAYTIME 5
 
+//--inputs(argv[])--
 extern char* g_cid;
 extern char* g_dbname;
 extern int g_type;
-extern char* g_data_path;
 
-//door calibration.
+//--door calibration(for g_type==1).--
 extern std::vector<cv::Point> g_calibrate;
 
+//--pathways.--
+typedef std::vector<cv::Point> Pathway;
+extern std::vector<Pathway> g_pathways;
+
+//--areas.--
+typedef std::vector<cv::Point> Area;
+extern std::vector<Area> g_areas;
+
+//--time--
 extern char* g_time;
 
 //--data--
 extern int g_count;
-extern int g_count_realtime;
 extern int g_female;
 extern int g_male;
 

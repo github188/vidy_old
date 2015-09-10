@@ -7,12 +7,31 @@
 namespace vidy{
 
 CAutoRun3::CAutoRun3(){
+  this->Init();  
 }
 
 CAutoRun3::~CAutoRun3(){
+  delete blobdetect;
+  delete blobtrack;
+  delete blobgenerate;
 }
 
 void CAutoRun3::Process(const cv::Mat frame){
+  //-- use upper body. --
+  currentBlobNodeList=blobdetect->DetectUpperBody2(roi);
+  blobtrack->Track2(&existBlobNodeList,currentBlobNodeList); 
+
+  endBlobNodeList=blobtrack->GetEndBlobNodeList(); 
+
+  if(endBlobNodeList.size()>0){
+    blobgenerate->Generate2(endBlobNodeList);
+  }
+}
+
+void CAutoRun3::Init(){
+  blobdetect=new CBlobDetect();
+  blobtrack=new CBlobTrack();
+  blobgenerate=new CBlobGenerate();
 }
 
 } //namespace vidy

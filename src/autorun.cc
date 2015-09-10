@@ -18,10 +18,10 @@ CAutoRun::~CAutoRun(){
 }
 
 void CAutoRun::Process(const cv::Mat frame){
-
-  cv::Rect r(g_calibrate[0].x-50,g_calibrate[0].y-280,g_calibrate[1].x-g_calibrate[0].x+100,400);
-  cv::Mat roi_detect(frame,r);
+ 
+  cv::Mat roi_detect(frame,roi_rect);
   cv::Mat roi=roi_detect.clone();
+
   //--use upper body. --
   //currentBlobNodeList=blobdetect->DetectUpperBody2(roi);
   //--use face.--
@@ -40,6 +40,28 @@ void CAutoRun::Process(const cv::Mat frame){
   return ;
 }
 
+void CAutoRun::GetROI(){
+  //order the two points.(from left to right)
+  if(g_calibrate[1].x-g_calibrate[0].x<0){
+    cv::Point tmp = g_calibrate[0];
+    g_calibrate[0] = g_calibrate[1];
+    g_calibrate[1] = tmp;
+  }
+
+  int r_x = g_calibrate[0].x-50<0?0:(g_calibrate[0].x-50);
+  int r_y = g_calibrate[0].y-280<0?0:(g_calibrate[0].y-280);
+  int r_w = (g_calibrate[1].x-g_calibrate[0].x+100)>frame.cols?frame.cols:(g_calibrate[1].x-g_calibrate[0].x+100);                                      
+
+  cv::Rect r(r_x,r_y,r_w,400);
+
+  roi_rect = r;
+
+}
+
+void CAutoRun::GetPathways(){
+
+}
+
 void CAutoRun::Init(){
   blobdetect=new CBlobDetect();
 #ifdef DEBUG
@@ -53,6 +75,7 @@ void CAutoRun::Init(){
 #ifdef DEBUG
   std::cout<<"CBlobGenerate) finish.."<<std::endl;
 #endif
+  this->GetROI();
 }
 
 } //namespace vidy

@@ -13,85 +13,11 @@
 #include "autorun.h"
 #include "db_mysql.h"
 
-#include <openbr/openbr.h>
-#include <openbr/openbr_plugin.h>
-
-#ifdef TESTVIEW  // for test view
-void help(){
-  printf("please enter video address.\n");
-}
-
-//@param argv[1]:read address.
-//@param argv[2]:camera type.
-int main(int argc,char* argv[]){
-  if(argc==2){
-    g_type=1;
-  }else if(argc==1){
-    help();
-    return 0;  
-  }else{
-    g_type=atoi(argv[2]);
-  }
-  g_dbname2="realtime";
-  
-  cv::VideoCapture capture(argv[1]);
-  if(!capture.isOpened()){
-    std::cout<<"remote address error!"<<std::endl;
-  }
-  
-  char key;
-  cv::Mat frame;
- 
-  //--Init processing class.
-  vidy::IAutoRun* pAutoRun;
-
-  switch(g_type){
-    case 1:
-      pAutoRun = new vidy::CAutoRunTestView1();
-      break;
-    default:
-      return 0;
-  }
-
-  while(key!=27){
-    double begin_time=clock();
- 
-    capture.read(frame);
-
-    if(frame.empty()){
-        usleep(1000000);
-        std::cout<<"no frame"<<std::endl;
-        continue;
-    }
-
-    cv::imshow("frame",frame);
-
-    pAutoRun->Process(frame);
-
-    double finish_time=clock();
-
-    double duration=(finish_time-begin_time)/CLOCKS_PER_SEC;
-
-    int wait_time=(double)(1000.00f/FPS)-duration*1000.00f;
-
-    if(wait_time<10){
-      key=cv::waitKey(1);
-    }else{
-      key=cv::waitKey(wait_time);
-    }
-
-  }
-  delete pAutoRun;
-  return 0;
-}
-
-#else // TESTVIEW
 void help(){
   printf("please enter database name, camera id, read address and camera type.\n");
   printf("type 1 : entrance type. \n");
   printf("type 2 : fullview/birdview type. \n");
   printf("type 3 : key area type. \n");
-  printf("type 4 : real-time entrance type. \n");
 }
 
 //@param argv[1]:database name.
@@ -105,11 +31,15 @@ int main(int argc,char* argv[]){
     return 0;
   }
 
+  //set global variable.
   g_dbname=argv[1];
-  g_dbname2=argv[1];
   g_cid=argv[2];
   g_type=atoi(argv[4]);
 
+  //--set database configs--
+  g_dbname2=argv[1];
+
+  //-- data from database ---//
   vidy::IDBMySQL* dbmysql = new vidy::IDBMySQL();
   //--get calibration data from database/
   char sql[100];
@@ -157,8 +87,7 @@ int main(int argc,char* argv[]){
         printf("type 1 calibrated data must be two points.\n");
         return 0;
       }
-      //br::Context::initialize(argc,argv);
-      //pAutoRun = new vidy::CAutoRun();
+      pAutoRun = new vidy::CAutoRun();
       break;
 
     //type 2 : for birdview or fullview.
@@ -176,12 +105,18 @@ int main(int argc,char* argv[]){
       return 0;
   }
   cv::VideoCapture capture(argv[3]);
+
   if(!capture.isOpened()){
     std::cout<<"remote address error!"<<std::endl;
   }
+
   char key;
   cv::Mat frame; 
   time_t t; //localtime.
+
+#ifdef DEBUG
+  int count_frame=0;
+#endif // DEBUG
   
   while(key!=27){
       double begin_time=clock();
@@ -212,13 +147,7 @@ int main(int argc,char* argv[]){
 
       if(hour>=8 && hour<23){
         //--process runs.
-        //pAutoRun->Process(frame);
-        br::Context::initialize(argc,argv,"/home/extremevision1/Work/openbr");
-        QSharedPointer<br::Transform> transform = br::Transform::fromAlgorithm("AgeEstimation");
-        br::Template queryA("/home/extremevision1/Work/openbr/data/MEDS/img/S354-01-t10_01.jpg");
-        queryA >> *transform;
-        std::cout<<queryA.file.get<float>("Age")<<std::endl;
-        return 0;
+        pAutoRun->Process(frame);
       }
 
       double finish_time=clock();
@@ -227,20 +156,22 @@ int main(int argc,char* argv[]){
 #ifdef DEBUG
       std::cout<<duration<<std::endl;
 #endif
-      int wait_time=(double)(1000.00f/FPS)-duration*1000.00f;
+      //int wait_time=(double)(1000.00f/FPS)-duration*1000.00f;
       
-      if(wait_time<10){
-        key=cv::waitKey(1);
-      }else{
-        key=cv::waitKey(wait_time);
+      //-- time control --/
+      key=cv::waitKey(1);
+
+#ifdef DEBUG
+      if(key=='s'){
+        char pic[50];
+        sprintf(pic,"%s/test%d.jpg",g_cid,count_frame);
+        cv::imwrite(pic,frame);
+        count_frame++;
       }
+#endif
   }
-  if(g_type==1){
-    br::Context::finalize();
-  }
-  //delete pAutoRun;
+  delete pAutoRun;
 
   return 1;
 } // main
 
-#endif //NORMAL

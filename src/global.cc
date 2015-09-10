@@ -11,8 +11,9 @@ char* g_data_path="";
 
 std::vector<cv::Point> g_calibrate;
 
+std::vector<Pathway> g_pathways;
+
 int g_count=0;
-int g_count_realtime=0;
 int g_female=0;
 int g_male=0;
 
