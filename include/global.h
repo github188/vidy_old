@@ -27,9 +27,8 @@ extern std::vector<cv::Point> g_calibrate;
 typedef std::vector<cv::Point> Pathway;
 extern std::vector<Pathway> g_pathways;
 
-//--areas.--
-typedef std::vector<cv::Point> Area;
-extern std::vector<Area> g_areas;
+//--areas.--;
+extern std::vector<cv::Point> g_area;
 
 //--time--
 extern char* g_time;

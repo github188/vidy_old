@@ -20,6 +20,115 @@ void help(){
   printf("type 3 : key area type. \n");
 }
 
+void get_calibration_data(){
+  //-- data from database ---//
+  vidy::IDBMySQL* dbmysql = new vidy::IDBMySQL();
+
+  //note.  only g_type==1 needs g_calibration.
+  //note2. only 1 door situation.
+  //-- get door calibration data.--/
+  char sql_calibration[100];
+  if(g_type){
+    sprintf(sql_calibration,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='1' limit 0,1",g_cid);
+    std::vector<std::vector<std::string> > res = dbmysql->GetData(sql_calibration);
+    char str[100]="";
+    sscanf(res[0][0].data(),"MULTIPOINT(%[^)])",str);
+    const char* split=", ";
+    char* p;
+    p=strtok(str,split);
+    int _count = 0;
+    cv::Point point;
+    while(p!=NULL){
+      _count++;
+      if(_count%2==1){
+        //x
+        point.x=atoi(p);
+      }else{
+        //y
+        point.y=atoi(p);
+        g_calibrate.push_back(point);
+      }
+      p=strtok(NULL,split);
+    }
+#ifdef DEBUG
+    std::cout<<"Door:";
+    for(unsigned int j=0;j<g_calibrate.size();j++){
+      std::cout<<g_calibrate[j].x<<" "<<g_calibrate[j].y<<std::endl;
+    }
+#endif
+  }
+
+  //-- get pathway data --/
+  char sql_pathway[100];
+  sprintf(sql_pathway,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='2'",g_cid);
+  std::vector<std::vector<std::string> > res = dbmysql->GetData(sql_pathway);
+  for(unsinged int=0;i<res.size();i++){
+    char str[100]="";
+    sscanf(res[i][0].data(),"MULTIPOINT(%[^)])",str);
+    const char* split=", ";
+    char* p;
+    p=strtok(str,split);
+    int _count = 0;
+    cv::Point point;
+    Pathway _pathway;
+    while(p!=NULL){
+      _count++;
+      if(_count%2==1){
+        //x
+        point.x=atoi(p);
+      }else{
+        //y
+        point.y=atoi(p);
+        _pathway.push_back(point);
+      }
+      p=strtok(NULL,split);
+    }
+    g_pathways.push_back(_pathway);
+#ifdef DEBUG
+    std::cout<<"G_Pathways:";
+    for(unsigned int j=0;j<g_pathways[i].size();j++){
+      std::cout<<g_pathway[i][j].x<<" "<<g_pathways[i][j].y<<" | ";
+    }
+    std::cout<<endl;
+#endif
+  }
+
+  //note. only 1 area situation.
+  //-- get area data --/
+  char sql_area[100];
+  sprintf(sql_area,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='3' limit 0,1",g_cid);
+  std::vector<std::vector<std::string> > res = dbmysql->GetData(sql_area);
+  char str[100]="";
+  sscanf(res[0][0].data(),"MULTIPOINT(%[^)])",str);
+  const char* split=", ";
+  char* p;
+  p=strtok(str,split);
+  int _count = 0;
+  cv::Point point;
+  while(p!=NULL){
+    _count++;
+    if(_count%2==1){
+      //x
+      point.x=atoi(p);
+    }else{
+      //y
+      point.y=atoi(p);
+      g_area.push_back(point);
+    }
+    p=strtok(NULL,split);
+  }
+#ifdef DEBUG
+  std::cout<<"G_Areas:";
+  for(unsigned int j=0;j<g_area.size();j++){
+    std::cout<<g_area[j].x<<" "<<g_area[j].y<<" | ";;
+  }
+  std::cout<<endl;
+#endif
+  
+  delete dbmysql;
+
+}
+
 //@param argv[1]:database name.
 //@param argv[2]:camera id.
 //@param argv[3]:read address.
@@ -40,42 +149,8 @@ int main(int argc,char* argv[]){
   g_dbname2=argv[1];
 
   //-- data from database ---//
-  vidy::IDBMySQL* dbmysql = new vidy::IDBMySQL();
-  //--get calibration data from database/
-  char sql[100];
-  if(g_type){
-    //--type 1 : entrance type /
-    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='1'",g_cid);
-  }else{
-    //--type 2,3 : roi area data /
-    sprintf(sql,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='3'",g_cid);
-  }
-  std::vector<std::vector<std::string> > res = dbmysql->GetData(sql);
-  char str[100]="";
-  sscanf(res[0][0].data(),"MULTIPOINT(%[^)])",str);
-  const char* split=", ";
-  char* p;
-  p=strtok(str,split);
-  int _count = 0;
-  cv::Point point;
-  while(p!=NULL){
-    _count++;
-    if(_count%2==1){
-      //x
-      point.x=atoi(p);
-    }else{
-      //y
-      point.y=atoi(p);
-      g_calibrate.push_back(point);
-    }
-    p=strtok(NULL,split);
-  }
-#ifdef DEBUG
-  for(unsigned int j=0;j<g_calibrate.size();j++){
-    std::cout<<"Point:"<<g_calibrate[j].x<<" "<<g_calibrate[j].y<<std::endl;
-  }
-#endif
-  
+  get_calibration_data();
+
   //--Init processing class.
   vidy::IAutoRun* pAutoRun;
   
