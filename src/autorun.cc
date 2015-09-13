@@ -50,7 +50,7 @@ void CAutoRun::GetROI(){
 
   int r_x = g_calibrate[0].x-50<0?0:(g_calibrate[0].x-50);
   int r_y = g_calibrate[0].y-280<0?0:(g_calibrate[0].y-280);
-  int r_w = (g_calibrate[1].x-g_calibrate[0].x+100)>frame.cols?frame.cols:(g_calibrate[1].x-g_calibrate[0].x+100);                                      
+  int r_w = (g_calibrate[1].x-g_calibrate[0].x+100)>WIDTH?WIDTH:(g_calibrate[1].x-g_calibrate[0].x+100);                                      
 
   cv::Rect r(r_x,r_y,r_w,400);
 

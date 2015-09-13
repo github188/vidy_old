@@ -7,11 +7,12 @@
 char* g_cid="";
 char* g_dbname="";
 int g_type = 0;
-char* g_data_path="";
 
 std::vector<cv::Point> g_calibrate;
 
 std::vector<Pathway> g_pathways;
+
+std::vector<cv::Point> g_area;
 
 int g_count=0;
 int g_female=0;

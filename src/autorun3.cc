@@ -18,7 +18,7 @@ CAutoRun3::~CAutoRun3(){
 
 void CAutoRun3::Process(const cv::Mat frame){
   //-- use upper body. --
-  currentBlobNodeList=blobdetect->DetectUpperBody2(roi);
+  currentBlobNodeList=blobdetect->DetectUpperBody2(frame);
   blobtrack->Track2(&existBlobNodeList,currentBlobNodeList); 
 
   endBlobNodeList=blobtrack->GetEndBlobNodeList(); 

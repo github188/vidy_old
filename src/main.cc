@@ -30,41 +30,44 @@ void get_calibration_data(){
   char sql_calibration[100];
   if(g_type){
     sprintf(sql_calibration,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='1' limit 0,1",g_cid);
-    std::vector<std::vector<std::string> > res = dbmysql->GetData(sql_calibration);
-    char str[100]="";
-    sscanf(res[0][0].data(),"MULTIPOINT(%[^)])",str);
-    const char* split=", ";
-    char* p;
-    p=strtok(str,split);
-    int _count = 0;
-    cv::Point point;
-    while(p!=NULL){
-      _count++;
-      if(_count%2==1){
-        //x
-        point.x=atoi(p);
-      }else{
-        //y
-        point.y=atoi(p);
-        g_calibrate.push_back(point);
+    std::vector<std::vector<std::string> > res_calibration = dbmysql->GetData(sql_calibration);
+    if(res_calibration.size()>0){
+      char str[100]="";
+      sscanf(res_calibration[0][0].data(),"MULTIPOINT(%[^)])",str);
+      const char* split=", ";
+      char* p;
+      p=strtok(str,split);
+      int _count = 0;
+      cv::Point point;
+      while(p!=NULL){
+        _count++;
+        if(_count%2==1){
+          //x
+          point.x=atoi(p);
+        }else{
+          //y
+          point.y=atoi(p);
+          g_calibrate.push_back(point);
+        }
+        p=strtok(NULL,split);
       }
-      p=strtok(NULL,split);
-    }
 #ifdef DEBUG
-    std::cout<<"Door:";
-    for(unsigned int j=0;j<g_calibrate.size();j++){
-      std::cout<<g_calibrate[j].x<<" "<<g_calibrate[j].y<<std::endl;
-    }
+      std::cout<<"G_Door:";
+      for(unsigned int j=0;j<g_calibrate.size();j++){
+        std::cout<<g_calibrate[j].x<<" "<<g_calibrate[j].y<<" | ";
+      }
+      std::cout<<std::endl;
 #endif
+    }
   }
 
   //-- get pathway data --/
   char sql_pathway[100];
   sprintf(sql_pathway,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='2'",g_cid);
-  std::vector<std::vector<std::string> > res = dbmysql->GetData(sql_pathway);
-  for(unsinged int=0;i<res.size();i++){
+  std::vector<std::vector<std::string> > res_pathway = dbmysql->GetData(sql_pathway);
+  for(unsigned int i=0;i<res_pathway.size();i++){
     char str[100]="";
-    sscanf(res[i][0].data(),"MULTIPOINT(%[^)])",str);
+    sscanf(res_pathway[i][0].data(),"MULTIPOINT(%[^)])",str);
     const char* split=", ";
     char* p;
     p=strtok(str,split);
@@ -87,9 +90,9 @@ void get_calibration_data(){
 #ifdef DEBUG
     std::cout<<"G_Pathways:";
     for(unsigned int j=0;j<g_pathways[i].size();j++){
-      std::cout<<g_pathway[i][j].x<<" "<<g_pathways[i][j].y<<" | ";
+      std::cout<<g_pathways[i][j].x<<" "<<g_pathways[i][j].y<<" | ";
     }
-    std::cout<<endl;
+    std::cout<<std::endl;
 #endif
   }
 
@@ -97,34 +100,35 @@ void get_calibration_data(){
   //-- get area data --/
   char sql_area[100];
   sprintf(sql_area,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='3' limit 0,1",g_cid);
-  std::vector<std::vector<std::string> > res = dbmysql->GetData(sql_area);
-  char str[100]="";
-  sscanf(res[0][0].data(),"MULTIPOINT(%[^)])",str);
-  const char* split=", ";
-  char* p;
-  p=strtok(str,split);
-  int _count = 0;
-  cv::Point point;
-  while(p!=NULL){
-    _count++;
-    if(_count%2==1){
-      //x
-      point.x=atoi(p);
-    }else{
-      //y
-      point.y=atoi(p);
-      g_area.push_back(point);
+  std::vector<std::vector<std::string> > res_area = dbmysql->GetData(sql_area);
+  if(res_area.size()>0){
+    char str[100]="";
+    sscanf(res_area[0][0].data(),"MULTIPOINT(%[^)])",str);
+    const char* split=", ";
+    char* p;
+    p=strtok(str,split);
+    int _count = 0;
+    cv::Point point;
+    while(p!=NULL){
+      _count++;
+      if(_count%2==1){
+        //x
+        point.x=atoi(p);
+      }else{
+        //y
+        point.y=atoi(p);
+        g_area.push_back(point);
+      }
+      p=strtok(NULL,split);
     }
-    p=strtok(NULL,split);
-  }
 #ifdef DEBUG
-  std::cout<<"G_Areas:";
-  for(unsigned int j=0;j<g_area.size();j++){
-    std::cout<<g_area[j].x<<" "<<g_area[j].y<<" | ";;
-  }
-  std::cout<<endl;
+    std::cout<<"G_Areas:";
+    for(unsigned int j=0;j<g_area.size();j++){
+      std::cout<<g_area[j].x<<" "<<g_area[j].y<<" | ";;
+    }
+    std::cout<<std::endl;
 #endif
-  
+  }
   delete dbmysql;
 
 }
@@ -242,6 +246,9 @@ int main(int argc,char* argv[]){
         sprintf(pic,"%s/test%d.jpg",g_cid,count_frame);
         cv::imwrite(pic,frame);
         count_frame++;
+      }
+      if(key=='b'){
+        cv::imwrite("background.jpg",frame);
       }
 #endif
   }
