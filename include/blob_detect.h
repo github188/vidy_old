@@ -20,6 +20,7 @@ namespace vidy{
 class CBlobDetect{
 public:
   CBlobDetect();
+
   ~CBlobDetect();
   
   //TODO
@@ -44,8 +45,12 @@ public:
   BlobNodeList DetectUpperBody2(const cv::Mat frame);
 
   BlobNodeList DetectFace2(const cv::Mat frame);
+
+  //Note: Use HOG detect.
+  BlobNodeList DetectPedestrian(const cv::Mat frame);
   
 protected:
+
   void Init();
   
   //TODO
@@ -67,9 +72,9 @@ protected:
       return 0;
     }
   };
-
+  
 private:
-  //TODO
+  //HOG detect.
   std::vector<cv::Rect> people;
   cv::HOGDescriptor people_detect_hog;
 

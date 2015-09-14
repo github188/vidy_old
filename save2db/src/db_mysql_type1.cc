@@ -82,9 +82,10 @@ void CDBMySQL1::Save2DB(){
   age_5=0; //51-60
   age_6=0; //>60
 
+  //if no data, insert 0.
   if(!inFile.is_open()){
     printf("no file at %s %s:00:00..\n",g_date,g_time);
-    return;
+    //return;
   }
  
   while(!inFile.eof()){

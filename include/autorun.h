@@ -31,8 +31,6 @@ public:
 protected:
   void Init();
   void GetROI();
-  //TODO:Get Pathways.
-  void GetPathways();
 private:
   CBlobDetect* blobdetect;
   CBlobTrack* blobtrack;

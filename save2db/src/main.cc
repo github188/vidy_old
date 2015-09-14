@@ -84,6 +84,23 @@ int main(int argc,char* argv[]){
 #ifdef DEBUG
       printf("save2db->Save2DB()\n");
 #endif //DEBUG
+      if(current_hour==9){
+        //re-connection.
+        switch(atoi(argv[3])){
+          case 1:{
+            save2db = new vidy::CDBMySQL1();
+            break;
+          }
+          case 2:{
+            save2db = new vidy::CDBMySQL2();
+            break;
+          }
+          case 3:{
+            save2db = new vidy::CDBMySQL3();
+            break;
+          }
+       }
+      }
       //--save data
       save2db->Save2DB();
     }

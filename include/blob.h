@@ -52,6 +52,7 @@ public:
     gender=2;
 
     //init direction.
+    //order of all pathways. /eg. "1" means the first pathway.
     direction=0;
 
     //init age.

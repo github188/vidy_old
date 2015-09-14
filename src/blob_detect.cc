@@ -230,7 +230,6 @@ BlobNodeList CBlobDetect::DetectFace2(const cv::Mat frame){
   cv::imshow("detect face2",showframe3);
 #endif //DEBUG
   return currentBlobNodeList;
-
 }
 
 void CBlobDetect::Init(){
@@ -263,6 +262,69 @@ void CBlobDetect::Init(){
   };
 #endif
 }
+
+BlobNodeList CBlobDetect::DetectPedestrian(const cv::Mat frame){
+#ifdef DEBUG
+  cv::Mat showframe3=frame.clone();
+#endif // DEBUG
+
+  people_detect_hog.detectMultiScale(frame,people,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
+
+  BlobNodeList currentBlobNodeList;
+  for(unsigned int i=0;i<people.size();i++){
+    //inorge too big or too small
+    //if(faces[i].width>HMAX||
+    //  faces[i].width<WMIN||
+    //  faces[i].height>HMAX||
+    //  faces[i].height<HMIN){
+    //  continue;
+    //}
+    
+    people[i].x=people[i].x>0?people[i].x:0;
+    people[i].y=people[i].y>0?people[i].y:0;
+    people[i].width=people[i].x+people[i].width>frame.cols?frame.cols-people[i].x:people[i].width;
+    people[i].height=people[i].y+people[i].height>frame.rows?frame.rows-people[i].y:people[i].height;
+
+    PreBlob preblob;
+    preblob.blob.x=people[i].x;
+    preblob.blob.y=people[i].y;
+    preblob.blob.w=people[i].width;
+    preblob.blob.h=people[i].height;
+    preblob.blob.image=frame(people[i]).clone();
+    //change pre_index.
+    preblob.pre_index=0;
+    PreBlob previous_preblob=this->FindPreBlobByCurrentPreBlob(preblob);                                  
+    if(previous_preblob.pre_index==PREBLOBNUM+1){    
+      preblob.pre_index=PREBLOBNUM+1;                
+    }else{
+      preblob.pre_index=(previous_preblob.pre_index)+1;     
+    }
+#ifdef DEBUG
+    std::cout<<preblob.pre_index<<std::endl;         
+#endif
+    preblob_list.push_back(preblob);                 
+#ifdef DEBUG
+    if(preblob.pre_index==PREBLOBNUM){               
+      cv::rectangle(showframe3,people[i],cv::Scalar(0,255,0),3);                                           
+    }else{
+      //putText(showframe3,"Male",Point(upperbodies[i].x,upperbodies[i].y-5),FONT_HERSHEY_SIMPLEX,0.5,Scalar(255,0,0),1);
+      cv::rectangle(showframe3,people[i],cv::Scalar(255,0,0),3);
+    }
+#endif //DEBUG
+    if(preblob.pre_index==PREBLOBNUM){
+      cv::cvtColor(preblob.blob.image,preblob.blob.image,CV_RGB2GRAY);
+      BlobNode blobnode(preblob.blob);
+      currentBlobNodeList.push_back(blobnode);
+    }
+  }
+  pre_preblob_list=preblob_list; //update pre_preblob_list.
+#ifdef DEBUG
+  cv::imshow("detect pedestrians",showframe3);
+#endif //DEBUG
+  return currentBlobNodeList;
+
+}
+
 
 int CBlobDetect::DetectPeople(const cv::Mat roi_frame){
   std::vector<cv::Rect> found;

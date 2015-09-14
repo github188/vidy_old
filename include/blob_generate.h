@@ -10,10 +10,6 @@
 #include "gender_detect.h"
 #include "age_estimate.h"
 
-#ifdef TESTVIEW
-#include "db_mysql.h"
-#endif // TESTVIEW
-
 namespace vidy{
 
 class CBlobGenerate{
@@ -21,20 +17,11 @@ public:
   CBlobGenerate();
   ~CBlobGenerate();
   void Generate2(BlobNodeList& endBlobNodeList);
-
-#ifdef TESTVIEW
-  void GenerateTestView(BlobNodeList& endBlobNodeList);
-#endif // TESTVIEW
-
+protected:
+  int GetDirection(std::vector<cv::Rect> trajectory);
 private:
   GenderDetect* genderdetect;
   AgeEstimate* ageestimate;
-
-#ifdef TESTVIEW
-  IDBMySQL* dbmysql;
-#endif // TESTVIEW
-
-
 }; //class CBlobGenerate
 
 } //namespace vidy

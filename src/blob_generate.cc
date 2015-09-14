@@ -30,34 +30,18 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     if(!(endBlobNodeList[i].face.empty())){
       cv::Mat face_gray;
       cv::cvtColor(endBlobNodeList[i].face,face_gray,CV_RGB2GRAY);
-      //endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
-      //endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
+      //detect gender.
+      endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
+      //estimation age.
+      endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
 
-      //br::Template query(face_gray);
-      //QSharedPointer<br::Transform> transform = br::Transform::fromAlgorithm("AgeEstimation");
-      //query>>*transform;
-      //endBlobNodeList[i].age = (int)query.file.get<float>("Age");
-      /*query>>*(br::Transform::fromAlgorithm("GenderEstimation"));
-      if(query.file.get<QString>("Gender")=="女"){
-        endBlobNodeList[i].gender=0;
-      }else{
-        endBlobNodeList[i].gender=1;
-      }*/
     }
     
     //--direction detect.
-    cv::Rect _box = endBlobNodeList[i].box;
-    if(_box.x<50&&(_box.y+_box.height)>200){
-      endBlobNodeList[i].direction=1;
-    }else if((_box.x+_box.width>350)&&(_box.y+_box.height)>200){
-      endBlobNodeList[i].direction=3;
-    }else if((_box.y+_box.height)>350){ 
-      endBlobNodeList[i].direction=2;
-    }else if((_box.y<20)){
-      endBlobNodeList[i].direction=0;
-    }else{
-      endBlobNodeList[i].direction=0;
-    }
+    //get order num of direction.
+    std::vector<cv::Rect> trajectory = endBlobNodeList[i].trajectory;
+    endBlobNodeList[i].direction = GetDirection(trajectory);
+    
 
 #ifdef SERVER
     std::string file="/usr/local/vidy/result/";
@@ -88,23 +72,27 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
   }
 }
 
-#ifdef TESTVIEW
-void CBlobGenerate::GenerateTestView(BlobNodeList& endBlobNodeList){
-  for(unsigned int i=0;i<endBlobNodeList.size();i++){
-    cv::Mat face_gray;
-    cv::cvtColor(endBlobNodeList[i].face,face_gray,CV_RGB2GRAY);
-    endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
-    endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
-#ifdef DEBUG
-    std::cout<<"insert data..."<<std::endl;
-#endif
-    char sql[100];
-    sprintf(sql, "insert into t_data_realtime(count,gender,age,pathway) values('1','%d','%d','1')",endBlobNodeList[i].gender,endBlobNodeList[i].age);
-    dbmysql->InsertData(sql);
-    
+int CBlobGenerate::GetDirection(std::vector<cv::Point> trajectory){
+  cv::Point p1(trajectory[0].x+0.5*trajectory[0].width,trajectory[0].y+0.5*trajectory[0].height);
+  cv::Point p2(trajectory[0.5*trajectory.size()].x+0.5*trajectory[0.5*trajectory.size()].width,trajectory[0.5*trajectory.size()].y+0.5*trajectory[0.5*trajectory.size()].height);
+  cv::Point p3(trajectory[trajectory.size()].x+0.5*trajectory[trajectory.size()].width,trajectory[trajectory.size()].y+0.5*trajectory[trajectory.size()].height);
+  float distance=100.00f;
+  int direction = 0;
+  for(unsigned int i=0;i<g_pathways.size();i++){
+    int tmp_size = g_pathways[i].size();
+    cv::Point pp1(g_pathways[i][0].x,g_pathways[i][0].y);
+    cv::Point pp2(g_pathways[i][0.5*tmp_size].x,g_pathways[i][0.5*tmp_size].y);
+    cv::Point pp3(g_pathways[i][tmp_size].x,g_pathways[i][tmp_size].y);
+    float _distance = (sqrt(pow(p1.x-pp1.x,2)+pow(p1.y-pp1.y,2))+sqrt(pow(p2.x-pp2.x,2)+pow(p2.y-pp2.y,2))+sqrt(pow(p2.x-pp2.x,2)+pow(p2.y-pp2.y,2)))/3;
+    if(_distance<distance){
+      distance = _distance;
+    }
   }
-
-} // generate testview.
-#endif
+  //direction principal:
+  //default:0
+  //pathway 1 : direction=1
+  //pathway 2 : direction=2
+  return direction+1;
+}
 
 } //namespace vidy

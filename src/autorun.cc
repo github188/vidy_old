@@ -41,7 +41,8 @@ void CAutoRun::Process(const cv::Mat frame){
 }
 
 void CAutoRun::GetROI(){
-  //order the two points.(from left to right)
+
+  //order two points.(from left to right)
   if(g_calibrate[1].x-g_calibrate[0].x<0){
     cv::Point tmp = g_calibrate[0];
     g_calibrate[0] = g_calibrate[1];
@@ -58,11 +59,8 @@ void CAutoRun::GetROI(){
 
 }
 
-void CAutoRun::GetPathways(){
-
-}
-
 void CAutoRun::Init(){
+
   blobdetect=new CBlobDetect();
 #ifdef DEBUG
   std::cout<<"CBlobDetect() finish.."<<std::endl;
@@ -73,9 +71,12 @@ void CAutoRun::Init(){
 #endif
   blobgenerate=new CBlobGenerate();
 #ifdef DEBUG
-  std::cout<<"CBlobGenerate) finish.."<<std::endl;
+  std::cout<<"CBlobGeneratei() finish.."<<std::endl;
 #endif
+
+  //get roi area for analysis.
   this->GetROI();
+
 }
 
 } //namespace vidy

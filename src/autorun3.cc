@@ -17,8 +17,8 @@ CAutoRun3::~CAutoRun3(){
 }
 
 void CAutoRun3::Process(const cv::Mat frame){
-  //-- use upper body. --
-  currentBlobNodeList=blobdetect->DetectUpperBody2(frame);
+  //-- use hog detect. --
+  currentBlobNodeList=blobdetect->DetectPedestrian(frame);
   blobtrack->Track2(&existBlobNodeList,currentBlobNodeList); 
 
   endBlobNodeList=blobtrack->GetEndBlobNodeList(); 

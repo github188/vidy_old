@@ -29,6 +29,7 @@ CAutoRun2::CAutoRun2(){
   count=FPS;
 
   update_background=false;
+
 }
 
 CAutoRun2::~CAutoRun2(){
