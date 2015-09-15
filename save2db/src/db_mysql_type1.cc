@@ -73,7 +73,7 @@ void CDBMySQL1::Save2DB(){
   count=0;
   female=0;
   male=0;
-  std::vector<int> _directions(pathways.size());
+  std::vector<int> _directions(pathways.size()+1);
   directions = _directions;
   age_1=0; //<20
   age_2=0; //21-30
@@ -89,6 +89,7 @@ void CDBMySQL1::Save2DB(){
   }
  
   while(!inFile.eof()){
+    //get result data.
     int _count,_gender,_direction,_age;
     inFile>>_count>>_gender>>_direction>>_age;
 #ifdef DEBUG
@@ -103,7 +104,8 @@ void CDBMySQL1::Save2DB(){
       female++;
     }
     //--direciton.
-    (directions[_direction-1])++;
+    //direction==0 means no in each of the selected pathways.
+    (directions[_direction])++;
     //--age.
     _age = random(40)+20;
     switch((int)(_age/10)){
@@ -154,18 +156,14 @@ void CDBMySQL1::SaveCount(){
 #endif
 
   this->InsertData(sql);
+
 }
 
 void CDBMySQL1::SavePathway(){
-  //compute total directions number.
-  int direction_total = 0;
-  for(unsigned int i=0;i<directions.size();i++){
-    direction_total += directions[i];
-  }  
 
   for(unsigned int i=0;i<pathways.size();i++){
 
-    std::string sql = "insert into t_data_path_result(cid,date,time,path,num,percentage) values('";
+    std::string sql = "insert into t_data_path_result(cid,date,time,path,num) values('";
     char ccid[10];
     sprintf(ccid,"%d",g_cid);
     sql += ccid;
@@ -188,20 +186,14 @@ void CDBMySQL1::SavePathway(){
     sql += ")',0),'";
 
     char cdirection[10];
-    sprintf(cdirection,"%d",directions[i]);    
+    sprintf(cdirection,"%d",directions[i+1]);    
     sql += cdirection;
-    sql += "','";
-     
-    char cpercentage[10];
-    sprintf(cpercentage,"%.2f",100.00f*directions[i]/direction_total);
-    sql += cpercentage;
     sql += "')";
 
 #ifdef DEBUG
     printf("%s\n",sql.data());
 #endif //DEBUG
     this->InsertData(sql.data());
-
   }
 }
 

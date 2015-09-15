@@ -15,6 +15,8 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
+#include <time.h>
+
 namespace vidy{
 
 class CBlobTrack{
@@ -53,6 +55,9 @@ private:
 
   //face detect.
   cv::CascadeClassifier face_cascade;
+
+  //time
+  time_t t;
 
 }; //class CBlobTrack
 

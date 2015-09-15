@@ -17,8 +17,16 @@ public:
   CBlobGenerate();
   ~CBlobGenerate();
   void Generate2(BlobNodeList& endBlobNodeList);
+
+  //generate result for type 3 camera.
+  void Generate3(BlobNodeList& endBlobNodeList);
+
 protected:
   int GetDirection(std::vector<cv::Rect> trajectory);
+
+  //get pathway order result for type 2&&3 camera.
+  int GetDirection2(std::vector<cv::Rect> trajectory);
+
 private:
   GenderDetect* genderdetect;
   AgeEstimate* ageestimate;

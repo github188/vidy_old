@@ -67,8 +67,8 @@ void get_calibration_data(){
   std::vector<std::vector<std::string> > res_pathway = dbmysql->GetData(sql_pathway);
   for(unsigned int i=0;i<res_pathway.size();i++){
     char str[100]="";
-    sscanf(res_pathway[i][0].data(),"MULTIPOINT(%[^)])",str);
-    const char* split=", ";
+    sscanf(res_pathway[i][0].data(),"{%[^}]}",str);
+    const char* split=",";
     char* p;
     p=strtok(str,split);
     int _count = 0;

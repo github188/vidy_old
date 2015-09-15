@@ -16,9 +16,6 @@ namespace vidy{
 CBlobGenerate::CBlobGenerate(){
   genderdetect = new GenderDetect();
   ageestimate = new AgeEstimate();
-#ifdef TESTVIEW
-  dbmysql = new IDBMySQL();
-#endif // TESTVIEW
 }
 
 CBlobGenerate::~CBlobGenerate(){
@@ -72,27 +69,40 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
   }
 }
 
-int CBlobGenerate::GetDirection(std::vector<cv::Point> trajectory){
-  cv::Point p1(trajectory[0].x+0.5*trajectory[0].width,trajectory[0].y+0.5*trajectory[0].height);
-  cv::Point p2(trajectory[0.5*trajectory.size()].x+0.5*trajectory[0.5*trajectory.size()].width,trajectory[0.5*trajectory.size()].y+0.5*trajectory[0.5*trajectory.size()].height);
-  cv::Point p3(trajectory[trajectory.size()].x+0.5*trajectory[trajectory.size()].width,trajectory[trajectory.size()].y+0.5*trajectory[trajectory.size()].height);
+int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
+  //chose two points from trajectory(first,last) in order.
+  cv::Point p1;
+  p1.x=(int)(trajectory[0].x+0.5*trajectory[0].width);
+  p1.y=(int)(trajectory[0].y+0.5*trajectory[0].height);
+  cv::Point p2;
+  p2.x=(int)(trajectory[trajectory.size()-1].x+0.5*trajectory[trajectory.size()-1].width);
+  p2.y=(int)(trajectory[trajectory.size()-1].y+0.5*trajectory[trajectory.size()-1].height);
+  //maxmum distance.
   float distance=100.00f;
   int direction = 0;
+  //compare 3 points from trajceotries with each pathway to get minimun average distance.
+  //return the order number of minumum average distance.
+  //if distance over maximum distance, return 0.
   for(unsigned int i=0;i<g_pathways.size();i++){
     int tmp_size = g_pathways[i].size();
-    cv::Point pp1(g_pathways[i][0].x,g_pathways[i][0].y);
-    cv::Point pp2(g_pathways[i][0.5*tmp_size].x,g_pathways[i][0.5*tmp_size].y);
-    cv::Point pp3(g_pathways[i][tmp_size].x,g_pathways[i][tmp_size].y);
-    float _distance = (sqrt(pow(p1.x-pp1.x,2)+pow(p1.y-pp1.y,2))+sqrt(pow(p2.x-pp2.x,2)+pow(p2.y-pp2.y,2))+sqrt(pow(p2.x-pp2.x,2)+pow(p2.y-pp2.y,2)))/3;
+    cv::Point pp1;
+    pp1.x=(int)(0.5*(g_pathways[i][0].x+g_pathways[i][1].x));
+    pp1.y=(int)(0.5*(g_pathways[i][0].y+g_pathways[i][1].y));
+    cv::Point pp2;
+    pp2.x=g_pathways[i][2].x;
+    pp2.y=g_pathways[i][2].y;
+    //average distance.
+    float _distance = (sqrt(pow(p1.x-pp1.x,2)+pow(p1.y-pp1.y,2))+sqrt(pow(p2.x-pp2.x,2)+pow(p2.y-pp2.y,2)))/2;
     if(_distance<distance){
       distance = _distance;
+      direction = i+1;
     }
   }
   //direction principal:
-  //default:0
+  //default:0, if direction=0, it means this trajectory is not in each of the pathways.
   //pathway 1 : direction=1
   //pathway 2 : direction=2
-  return direction+1;
+  return direction;
 }
 
 } //namespace vidy

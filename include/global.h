@@ -30,6 +30,9 @@ extern std::vector<Pathway> g_pathways;
 //--areas.--
 extern std::vector<cv::Point> g_area;
 
+//--time sequence--
+extern char g_time_sequence[50];
+
 //--time--
 extern char* g_time;
 

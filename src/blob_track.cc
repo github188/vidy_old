@@ -4,9 +4,7 @@
 
 #include "blob_track.h"
 #include <iostream>
-//#include <openbr/openbr.h>
-//#include <openbr/openbr_plugin.h>
-
+#include <time.h>
 
 #define MAXCOUNT 100
 
@@ -26,8 +24,6 @@ CBlobTrack::CBlobTrack(){
   if(!face_cascade.load(face_cascade_name)){
     printf("--(!)Error loading(face detect)\n");
   };
-  //transform_age = br::Transform::fromAlgorithm("AgeEstimation");
-  //transform_gender = br::Transform::fromAlgorithm("GenderEstimation");
 }
 
 CBlobTrack::~CBlobTrack(){
@@ -106,6 +102,10 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
     }
     //update trajectory.
     (*existBlobNodeList)[i].trajectory.push_back((*existBlobNodeList)[i].box);
+    //update time_sequence.
+    t = time(0);
+    strftime(g_time_sequence,sizeof(ctime),"%Y-%m-%d %H:%M:%S",localtime(&t));
+    (*existBlobNodeList)[i].trajectory.push_back(g_time_sequence);
   }  
 
   //--find new blobnodes and add to existBlobNodeList.
