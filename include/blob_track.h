@@ -8,6 +8,7 @@
 #include "blob.h"
 #include "blob_compare.h"
 #include "gender_detect.h"
+#include "global.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

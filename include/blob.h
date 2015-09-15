@@ -94,7 +94,7 @@ public:
 
   //Time sequence.
   //note. one-one correspondence with trajectory.
-  std::vector<std::string> time_sequence.
+  std::vector<std::string> time_sequence;
 
 protected:
   //Id consists of year,month,day,hour,minute,second,milisecond,blob's x,blob's y,blob's width and blob's height.

@@ -29,25 +29,40 @@ void get_calibration_data(){
   //-- get door calibration data.--/
   char sql_calibration[100];
   if(g_type){
-    sprintf(sql_calibration,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='1' limit 0,1",g_cid);
+    sprintf(sql_calibration,"select calibration_data from t_calibration where cid='%s' and typeid='1' limit 0,1",g_cid);
     std::vector<std::vector<std::string> > res_calibration = dbmysql->GetData(sql_calibration);
     if(res_calibration.size()>0){
       char str[100]="";
-      sscanf(res_calibration[0][0].data(),"MULTIPOINT(%[^)])",str);
-      const char* split=", ";
+      sscanf(res_calibration[0][0].data(),"{%[^}]}",str);
+      const char* split=":,";
       char* p;
       p=strtok(str,split);
       int _count = 0;
       cv::Point point;
       while(p!=NULL){
         _count++;
-        if(_count%2==1){
-          //x
-          point.x=atoi(p);
-        }else{
-          //y
-          point.y=atoi(p);
-          g_calibrate.push_back(point);
+        switch(_count%4){
+          case 1:{
+            break;
+          }
+          case 2:{
+            int len = sizeof(p);
+            char* x = new char(len-3);
+            x = p+1;
+            point.x = atoi(x);
+            break;
+          }
+          case 3:{
+           break;
+          }
+          case 0:{
+            int len = sizeof(p);
+            char* y = new char(len-3);
+            y = p+1;
+            point.y = atoi(y);
+            g_calibrate.push_back(point);
+            break;
+          }
         }
         p=strtok(NULL,split);
       }
@@ -63,12 +78,12 @@ void get_calibration_data(){
 
   //-- get pathway data --/
   char sql_pathway[100];
-  sprintf(sql_pathway,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='2'",g_cid);
+  sprintf(sql_pathway,"select calibration_data from t_calibration where cid='%s' and typeid='2'",g_cid);
   std::vector<std::vector<std::string> > res_pathway = dbmysql->GetData(sql_pathway);
   for(unsigned int i=0;i<res_pathway.size();i++){
     char str[100]="";
     sscanf(res_pathway[i][0].data(),"{%[^}]}",str);
-    const char* split=",";
+    const char* split=":,";
     char* p;
     p=strtok(str,split);
     int _count = 0;
@@ -76,14 +91,29 @@ void get_calibration_data(){
     Pathway _pathway;
     while(p!=NULL){
       _count++;
-      if(_count%2==1){
-        //x
-        point.x=atoi(p);
-      }else{
-        //y
-        point.y=atoi(p);
-        _pathway.push_back(point);
-      }
+      switch(_count%4){
+        case 1:{
+          break;
+        }
+        case 2:{
+          int len = sizeof(p);
+          char* x = new char(len-3);
+          x = p+1;
+          point.x = atoi(x);
+          break;
+        }
+        case 3:{
+          break;
+        }
+        case 0:{
+          int len = sizeof(p);
+          char* y = new char(len-3);
+          y = p+1;
+          point.y = atoi(y);
+          _pathway.push_back(point);
+          break;
+        }
+      }      
       p=strtok(NULL,split);
     }
     g_pathways.push_back(_pathway);
@@ -94,30 +124,47 @@ void get_calibration_data(){
     }
     std::cout<<std::endl;
 #endif
+
   }
+
 
   //note. only 1 area situation.
   //-- get area data --/
   char sql_area[100];
-  sprintf(sql_area,"select astext(calibration_data) from t_calibration where cid='%s' and typeid='3' limit 0,1",g_cid);
+  sprintf(sql_area,"select calibration_data from t_calibration where cid='%s' and typeid='3' limit 0,1",g_cid);
   std::vector<std::vector<std::string> > res_area = dbmysql->GetData(sql_area);
   if(res_area.size()>0){
     char str[100]="";
-    sscanf(res_area[0][0].data(),"MULTIPOINT(%[^)])",str);
-    const char* split=", ";
+    sscanf(res_area[0][0].data(),"{%[^}]}",str);
+    const char* split=":,";
     char* p;
     p=strtok(str,split);
     int _count = 0;
     cv::Point point;
     while(p!=NULL){
       _count++;
-      if(_count%2==1){
-        //x
-        point.x=atoi(p);
-      }else{
-        //y
-        point.y=atoi(p);
-        g_area.push_back(point);
+      switch(_count%4){
+        case 1:{
+          break;
+        }
+        case 2:{
+          int len = sizeof(p);
+          char* x = new char(len-3);
+          x = p+1;
+          point.x = atoi(x);
+          break;
+        }
+        case 3:{
+          break;
+        }
+        case 0:{
+          int len = sizeof(p);
+          char* y = new char(len-3);
+          y = p+1;
+          point.y = atoi(y);
+          g_area.push_back(point);
+          break;
+        }
       }
       p=strtok(NULL,split);
     }
@@ -129,6 +176,8 @@ void get_calibration_data(){
     std::cout<<std::endl;
 #endif
   }
+
+
   delete dbmysql;
 
 }
@@ -154,7 +203,7 @@ int main(int argc,char* argv[]){
 
   //-- data from database ---//
   get_calibration_data();
-
+  
   //--Init processing class.
   vidy::IAutoRun* pAutoRun;
   

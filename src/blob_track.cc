@@ -104,8 +104,8 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
     (*existBlobNodeList)[i].trajectory.push_back((*existBlobNodeList)[i].box);
     //update time_sequence.
     t = time(0);
-    strftime(g_time_sequence,sizeof(ctime),"%Y-%m-%d %H:%M:%S",localtime(&t));
-    (*existBlobNodeList)[i].trajectory.push_back(g_time_sequence);
+    strftime(g_time_sequence,sizeof(g_time_sequence),"%Y-%m-%d %H:%M:%S",localtime(&t));
+    (*existBlobNodeList)[i].time_sequence.push_back(g_time_sequence);
   }  
 
   //--find new blobnodes and add to existBlobNodeList.
@@ -173,18 +173,7 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
       cv::Rect rect(x,y,w,h);
       cv::Mat f;
       _frame(rect).copyTo(f);
-      (*existBlobNodeList)[i].face=f;
-      //f = cv::imread("/home/extremevision1/Work/vidy/data/family.jpg");
-      //br::Template query(f);
-      //transform_age = br::Transform::fromAlgorithm("AgeEstimation");
-      //query >> *transform_age;
-      //query >> *transform_gender;
-      //if(query.file.get<float>("Age")!=NULL){
-      //endBlobNodeList[i].age = (int)query.file.get<float>("Age"); 
-#ifdef DEBUG
-      //std::cout<<endBlobNodeList[i].age<<std::endl;
-#endif // DEBUG
-      //query>>*(br::Transform::fromAlgorithm("GenderEstimation")); 
+      (*existBlobNodeList)[i].face=f; 
 #ifdef DEBUG
       cv::imshow("face",(*existBlobNodeList)[i].face);
 #endif // DEBUG
@@ -193,6 +182,12 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
 
     //update trajectory.
     (*existBlobNodeList)[i].trajectory.push_back((*existBlobNodeList)[i].box);
+
+    //update time_sequence.
+    t = time(0);
+    strftime(g_time_sequence,sizeof(g_time_sequence),"%Y-%m-%d %H:%M:%S",localtime(&t));
+    (*existBlobNodeList)[i].time_sequence.push_back(g_time_sequence);
+
   }
 
 

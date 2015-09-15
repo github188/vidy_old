@@ -6,6 +6,7 @@
 #define VIDY_INC_GLOBAL_H_
 
 #include <vector>
+#include <string>
 #include "opencv2/core/core.hpp"
 
 #define WIDTH 1280
