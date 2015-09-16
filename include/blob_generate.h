@@ -6,9 +6,12 @@
 #define VIDY_INC_BLOB_GENERATE_H_
 
 #include <iostream>
+#include <string>
 #include "blob.h"
 #include "gender_detect.h"
 #include "age_estimate.h"
+
+#include “heatmap.h"
 
 namespace vidy{
 
@@ -26,6 +29,13 @@ protected:
 
   //get pathway order result for type 2&&3 camera.
   int GetDirection2(std::vector<cv::Rect> trajectory);
+
+  //get staytime result for type 2&&3 camera.
+  int GetStayTime(std::vector<std::string> time_sequence);
+
+  //get heatmap(x,y,stay_time_value) result for type 2&&3 camera.
+  std::vector<heatmap> GetHeatmapResult(std::vector<std::string> time_sequence,std::vector<cv::Rect> trajectory);
+  
 
 private:
   GenderDetect* genderdetect;

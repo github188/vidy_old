@@ -96,6 +96,9 @@ public:
   //note. one-one correspondence with trajectory.
   std::vector<std::string> time_sequence;
 
+  //Stay Time(seconds).
+  int staytime;
+
 protected:
   //Id consists of year,month,day,hour,minute,second,milisecond,blob's x,blob's y,blob's width and blob's height.
   std::string GetId(const int x,const int y,const int w,const int h){

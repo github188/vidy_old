@@ -5,6 +5,9 @@
 #include "blob_generate.h"
 #include "global.h"
 
+#define HEATMAP_RADIUS 50
+#define HEATMAP_MIN_SEC 5
+
 namespace vidy{
 
 //TODO: improve produtivity.
@@ -51,25 +54,108 @@ int CBlobGenerate::GetDirection2(std::vector<cv::Rect> trajectory){
   return direction;
 }
 
-void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
-  for(unsigned int i=0;i<endBlobNodeList.size();i++){
-    int direction = this->GetDirection2(endBlobNodeList[i].trajectory);
-#ifdef SERVER
-    std::string file="/usr/local/vidy/result/";
-#else
-    std::string file="../result/";
-#endif // SERVER
-    file += g_dbname;
-    file += "-cid";
-    file += g_cid;
-    file += "-pathway";
-    file += g_time;
-    file += ".dat";
-    std::ofstream outfile(file.data(),std::ios::app);
- 
-    //output the result.
-    outfile<<direction<<std::endl; 
+int CBlobGenerate::GetStayTime(std::vector<std::string> time_sequence){
+  std::string time_start = time_sequence[0];
+  std::string time_end = time_sequence[time_sequence.size()-1];
+  char* p_start = new char(2);
+  p_start = time_start.data()+12;
+  int hour_start = atoi(p_start);
+  int minue = atoi(p_start+3);
+  int second = atoi(p_start+3);
+  delete p_start;
+  char* p_end = new char(2);
+  p_end = time_end.data+12;
+  int hour_end = atoi(p_end);
+  int minue_end = atoi(p_end+3);
+  int second_end = atoi(p_end+3);
+  int staytime = 3600*(hour_end-hour_start)+60(minue_start-minue_end)+second_end-second_start;
+  return staytime;
+}
+
+std::vector<Heatmap> GetHeatmapResult(std::vector<std::string> time_sequence,std::vector<cv::Rect> trajectory)
+{
+  Heatmap heatmap_one;
+  heatmap_one.radius = HEATMAP_RADIUS;
+  std::vector<Heatmap> heatmap_data;
+  for(unsigned int i=0;i<trajectory.size();i++){
+    float t_x = trajectory[i].x+0.5*trajectory[i].width;
+    float t_y = trajectory[i].y+0.5*trajectory[j].height;
+    heatmap.value = 0;
+    for(unsigned int j=i+1;j<trajectory.size();j++){
+      float t_x2 = trajectory[j].x+0.5*trajectory[j].width;
+      float t_y2 = trajectory[j].y+0.5*trajectory[j].height;
+      if(fabs(t_x-t_x2)<HEATMAP_RADIUS&&fabs(t_y-t_y2)<HEATMAP_RADIUS){
+        value++;
+      }
+    }
+    if(value>FPS*HEATMAP_MIN_SEC){
+      heatmap.x = (int)(t_x+0.5*HEATMAP_RADIUS);
+      heatmap.y = (int)(t_y+0.5*HEATMAP_RADIUS);
+      heatmap_data.push_back(heatmap_one);
+    }
   }
+  return heatmap_data;
+}
+
+void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
+  //open pathway file.
+#ifdef SERVER
+  std::string file="/usr/local/vidy/result/";
+#else
+  std::string file="../result/";
+#endif // SERVER
+  file += g_dbname;
+  file += "-cid";
+  file += g_cid;
+  file += "-pathway";
+  file += g_time;
+  file += ".dat";
+  std::ofstream outfile(file.data(),std::ios::app);
+
+  //open staytime file.
+#ifdef SERVER
+  std::string file2="/usr/local/vidy/result/";
+#else
+  std::string file2="../result/";
+#endif // SERVER
+  file2 += g_dbname;
+  file2 += "-cid";
+  file2 += g_cid;
+  file2 += "-staytime";
+  file2 += g_time;
+  file2 += ".dat";
+  std::ofstream outfile2(file2.data(),std::ios::app);
+
+  //open heatmap file.
+#ifdef SERVER
+  std::string file3="/usr/local/vidy/result/";
+#else
+  std::string file3="../result/";
+#endif // SERVER
+  file3 += g_dbname;
+  file3 += "-cid";
+  file3 += g_cid;
+  file3 += "-heatmap";
+  file3 += g_time;
+  file3 += ".dat";
+  std::ofstream outfile3(file3.data(),std::ios::app);
+
+  for(unsigned int i=0;i<endBlobNodeList.size();i++){ 
+    int direction = this->GetDirection2(endBlobNodeList[i].trajectory);
+    //output the result.
+    outfile<<direction<<std::endl;
+    int staytime = this->GetStayTime(endBlobNodeList[i].time_sequence); 
+    outfile2<<staytime<<std::endl;
+    std::vector<Heatmap> heatmap_data = this->GetHeatmapResult(endBlobNodeList[i].time_sequence,endBlobNodeList[i].trajectory);
+    for(unsigned int j=0;j<heatmap_data.size();j++){
+      outfile3<<heatmap_data[j].x<<" "<<heatmap_data[j].y<<" "<<heatmap_data[j].value<<" "<<heatmap_data[j].radius<<std::endl;
+    }
+  }
+  
+  //close files.
+  outfile.close();
+  outfile2.close();
+  outfile3.close();
 }
 
 
