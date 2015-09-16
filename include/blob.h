@@ -52,11 +52,14 @@ public:
     gender=2;
 
     //init direction.
-    //order of all pathways. /eg. "1" means the first pathway.
+    //order of all pathways. /eg. "1" means the first pathway;  "0" means no matching pathway.
     direction=0;
 
     //init age.
     age=0;
+
+    //init enter.
+    enter=-1;
   };
 
   ~BlobNode(){
@@ -98,6 +101,12 @@ public:
 
   //Stay Time(seconds).
   int staytime;
+
+  //enter or not. only for type 1 camrea.
+  //-1:default.
+  //1:enter.
+  //0;exit.
+  int enter;
 
 protected:
   //Id consists of year,month,day,hour,minute,second,milisecond,blob's x,blob's y,blob's width and blob's height.

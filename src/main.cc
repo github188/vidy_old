@@ -76,9 +76,9 @@ void get_calibration_data(){
     }
   }
 
-  //-- get pathway data --/
+  //-- get default pathway data --/
   char sql_pathway[100];
-  sprintf(sql_pathway,"select calibration_data from t_calibration where cid='%s' and typeid='2'",g_cid);
+  sprintf(sql_pathway,"select calibration_data from t_calibration where cid='%s' and typeid='2' and path_type='default'",g_cid);
   std::vector<std::vector<std::string> > res_pathway = dbmysql->GetData(sql_pathway);
   for(unsigned int i=0;i<res_pathway.size();i++){
     char str[100]="";
@@ -121,6 +121,57 @@ void get_calibration_data(){
     std::cout<<"G_Pathways:";
     for(unsigned int j=0;j<g_pathways[i].size();j++){
       std::cout<<g_pathways[i][j].x<<" "<<g_pathways[i][j].y<<" | ";
+    }
+    std::cout<<std::endl;
+#endif
+
+  }
+
+  //-- get custom pathway data --/
+  //char sql_pathway[100];
+  sprintf(sql_pathway,"select calibration_data from t_calibration where cid='%s' and typeid='2' and path_type='custom'",g_cid);
+  res_pathway = dbmysql->GetData(sql_pathway);
+  for(unsigned int i=0;i<res_pathway.size();i++){
+    char str[100]="";
+    sscanf(res_pathway[i][0].data(),"{%[^}]}",str);
+    const char* split=":,";
+    char* p;
+    p=strtok(str,split);
+    int _count = 0;
+    cv::Point point;
+    Pathway _pathway;
+    while(p!=NULL){
+      _count++;
+      switch(_count%4){
+        case 1:{
+          break;
+        }
+        case 2:{
+          int len = sizeof(p);
+          char* x = new char(len-3);
+          x = p+1;
+          point.x = atoi(x);
+          break;
+        }
+        case 3:{
+          break;
+        }
+        case 0:{
+          int len = sizeof(p);
+          char* y = new char(len-3);
+          y = p+1;
+          point.y = atoi(y);
+          _pathway.push_back(point);
+          break;
+        }
+      }
+      p=strtok(NULL,split);
+    }
+    g_pathways_custom.push_back(_pathway);
+#ifdef DEBUG
+    std::cout<<"G_Pathways:";
+    for(unsigned int j=0;j<g_pathways_custom[i].size();j++){
+      std::cout<<g_pathways_custom[i][j].x<<" "<<g_pathways_custom[i][j].y<<" | ";
     }
     std::cout<<std::endl;
 #endif

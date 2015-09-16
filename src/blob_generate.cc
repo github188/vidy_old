@@ -22,6 +22,34 @@ CBlobGenerate::~CBlobGenerate(){
 }
 
 void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
+
+#ifdef SERVER
+  std::string file="/usr/local/vidy/result/";
+#else
+  std::string file="../result/";
+#endif // SERVER
+  file += g_dbname;
+  file += "-cid";
+  file += g_cid;
+  file += "-count";
+  file += g_time;
+  file += ".dat";
+  std::ofstream outfile(file.data(),std::ios::app);
+
+#ifdef SERVER
+  std::string filei2="/usr/local/vidy/result/";
+#else
+  std::string file2="../result/";
+#endif // SERVER
+  file2 += g_dbname;
+  file2 += "-cid";
+  file2 += g_cid;
+  file2 += "-count";
+  file2 += g_date;
+  file2 += ".dat";
+  std::ofstream outfile2(file2.data(),std::ios::app);
+
+
   for(unsigned int i=0;i<endBlobNodeList.size();i++){  
     //--gender detect.
     if(!(endBlobNodeList[i].face.empty())){
@@ -31,6 +59,8 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
       endBlobNodeList[i].gender=genderdetect->DetectByFace(face_gray);
       //estimation age.
       endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
+      
+      endBlobNodeList[i].enter=1;
 
     }
     
@@ -38,20 +68,14 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     //get order num of direction.
     std::vector<cv::Rect> trajectory = endBlobNodeList[i].trajectory;
     endBlobNodeList[i].direction = GetDirection(trajectory);
+    int custom_direction = GetDirectionCustom(trajectory);
     
-
-#ifdef SERVER
-    std::string file="/usr/local/vidy/result/";
-#else
-    std::string file="../result/";
-#endif // SERVER
-    file += g_dbname;
-    file += "-cid";
-    file += g_cid;
-    file += "-count";
-    file += g_time;
-    file += ".dat";
-    std::ofstream outfile(file.data(),std::ios::app);
+    //--enter or exit.
+    if(endBlobNodeList[i].enter!=1){
+      if((trajectory[trajectory.size()-1].y+0.5*trajectory[trajectory.size()-1].height-trajectory[0].y-0.5trajectory[trajectory.size()-1].height)<0){
+        endBlobNodeList[i].enter=0;
+      }
+    }
 
     g_count++;
 
@@ -63,10 +87,14 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
         endBlobNodeList[i].age = 10*(random(4) + 2);
     }
 
-    outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<std::endl;
+    outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<custom_direction<<std::endl;
+
+    outfile2<<endBlobNodeList[i].time_sequence[0]<<" "<<endBlobNodeList[i].enter<<std::endl;
      
     //--update realtime data.    
   }
+  outfile.close();
+  outfile2.close();
 }
 
 int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
@@ -84,7 +112,6 @@ int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
   //return the order number of minumum average distance.
   //if distance over maximum distance, return 0.
   for(unsigned int i=0;i<g_pathways.size();i++){
-    int tmp_size = g_pathways[i].size();
     cv::Point pp1;
     pp1.x=(int)(0.5*(g_pathways[i][0].x+g_pathways[i][1].x));
     pp1.y=(int)(0.5*(g_pathways[i][0].y+g_pathways[i][1].y));

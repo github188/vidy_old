@@ -11,6 +11,7 @@ int g_type = 0;
 std::vector<cv::Point> g_calibrate;
 
 std::vector<Pathway> g_pathways;
+std::vector<Pathway> g_pathways_custom;
 
 std::vector<cv::Point> g_area;
 

@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <iostream>
 #include "configs.h"
 #include "global.h"
 
@@ -61,11 +62,13 @@ class CDBMySQL1 : public IDBMySQL{
   private:
     std::string pathway_filename;
     std::vector<std::vector<cv::Point> > pathways;
+    std::vector<std::vector<cv::Point> > custom_pathways;
     //raw data.
     int count;
     int female;
     int male;
     std::vector<int> directions;
+    std::vector<int> custom_directions;
     int age_1;
     int age_2;
     int age_3;
@@ -90,13 +93,17 @@ class CDBMySQL3 : public IDBMySQL{
     virtual void Save2DB();
   protected:
     void SavePathway();
+    void SavePathwayCustom();
+    void SaveStaytime();
+    void SaveCount();
+    void SaveHeatmap();
   private:
     std::string pathway_filename;
     std::vector<std::vector<cv::Point> > pathways;
+    std::vector<std::vector<cv::Point> > custom_pathways;
     //raw data.
-    int direct_1;
-    int direct_2;
-    int direct_3;
+    std::vector<int> directions;
+    int count;
     //sql sentence.
     char sql[1024];
 }; //class CDBMySQL3
