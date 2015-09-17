@@ -219,7 +219,7 @@ BlobNodeList CBlobDetect::DetectFace2(const cv::Mat frame){
       cv::rectangle(showframe3,faces[i],cv::Scalar(255,0,0),3);
     }
 #endif //DEBUG
-    if(preblob.pre_index==PREBLOBNUM){
+    if(preblob.pre_index==PREBLOBNUM/*&&abs(preblob.blob.x-previous_preblob.blob.x)>2*/){
       cv::cvtColor(preblob.blob.image,preblob.blob.image,CV_RGB2GRAY);
       BlobNode blobnode(preblob.blob);
       currentBlobNodeList.push_back(blobnode);
@@ -250,7 +250,7 @@ void CBlobDetect::Init(){
   //init HOG detect.
   people_detect_hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
   //init face detect.
-  std::string face_cascade_name = "../data/haarcascades/haarcascade_frontalface_alt.xml";
+  std::string face_cascade_name = "../data/haarcascades/haarcascade_frontalface_default.xml";
   if( !face_cascade.load( face_cascade_name ) ){ 
     printf("--(!)Error loading\n");
   };

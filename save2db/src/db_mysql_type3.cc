@@ -60,9 +60,9 @@ CDBMySQL3::CDBMySQL3(){
 #endif // DEBUG
 
   //--get custom pathway data from database/
-  char sql[100];
+  //char sql[100];
   sprintf(sql,"select calibration_data from t_calibration where cid='%d' and typeid='2' and path_type='custom'",g_cid);
-  std::vector<std::vector<std::string> > res = this->GetData(sql);
+  res = this->GetData(sql);
   for(unsigned int i=0; i<res.size();i++){
     std::vector<cv::Point> pathway;
     char path_str[100]="";
@@ -108,7 +108,7 @@ CDBMySQL3::CDBMySQL3(){
     }
     std::cout<<std::endl;
   }
-
+#endif // DEBUG
 }
 
 CDBMySQL3::~CDBMySQL3(){
@@ -121,7 +121,7 @@ void CDBMySQL3::Save2DB(){
 #endif // DEBUG
 
   this->SavePathway();
-  this->SavePathwayCustom():
+  this->SavePathwayCustom();
   this->SaveStaytime();
   this->SaveCount();
   this->SaveHeatmap();
@@ -173,7 +173,7 @@ void CDBMySQL3::SaveStaytime(){
 
 void CDBMySQL3::SaveCount(){
   //save data.
-  sprintf(sql,"insert into t_data_count(cid,datetime,date,time,count) values('%d','%s %s:00:00','%s','%s:00:00','%.2f')",g_cid,g_date,g_time,g_date,g_time,count);
+  sprintf(sql,"insert into t_data_count(cid,datetime,date,time,count) values('%d','%s %s:00:00','%s','%s:00:00','%d')",g_cid,g_date,g_time,g_date,g_time,count);
 
 #ifdef DEBUG
   printf("%s",sql);
@@ -197,6 +197,8 @@ void CDBMySQL3::SaveHeatmap(){
   printf("%s\n",g_filename);
 #endif
 
+  std::ifstream inFile(g_filename,std::ios::in);
+
   if(!inFile.is_open()){
     printf("no file at %s %s:00:00..\n",g_date,g_time);
     //return;
@@ -214,7 +216,7 @@ void CDBMySQL3::SaveHeatmap(){
   sql += ":00:00',GeomFromText('MULTIPOINT(";
   while(!inFile.eof()){
     int x,y;
-    float valuei,radius;
+    float value,radius;
     inFile>>x>>y>>value>>radius;
     char _sql[50];
     sprintf(_sql,"%d %d,%d %d,",x,y,(int)value,radius);
@@ -277,7 +279,7 @@ void CDBMySQL3::SavePathway(){
     std::string points;
     for(unsigned int j=0;j<pathways[i].size();j++){
       char point[50];
-      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",i,"\""."\"",pathways[i][j].x,"\"","\"",i,"\"","\"",pathways[i][j].y,"\"");
+      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",i,"\"","\"",pathways[i][j].x,"\"","\"",i,"\"","\"",pathways[i][j].y,"\"");
       points += point;
       if(j!=pathways[i].size()-1){
         points += ",";
@@ -347,7 +349,7 @@ void CDBMySQL3::SavePathwayCustom(){
     std::string points;
     for(unsigned int j=0;j<pathways[i].size();j++){
       char point[50];
-      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",i,"\""."\"",pathways[i][j].x,"\"","\"",i,"\"","\"",pathways[i][j].y,"\"");
+      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",i,"\"","\"",pathways[i][j].x,"\"","\"",i,"\"","\"",pathways[i][j].y,"\"");
       points += point;
       if(j!=pathways[i].size()-1){
         points += ",";

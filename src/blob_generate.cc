@@ -37,17 +37,17 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
   std::ofstream outfile(file.data(),std::ios::app);
 
 #ifdef SERVER
-  std::string filei2="/usr/local/vidy/result/";
+  std::string file2="/usr/local/vidy/result/";
 #else
   std::string file2="../result/";
 #endif // SERVER
-  file2 += g_dbname;
-  file2 += "-cid";
-  file2 += g_cid;
-  file2 += "-count";
-  file2 += g_date;
-  file2 += ".dat";
-  std::ofstream outfile2(file2.data(),std::ios::app);
+  //file2 += g_dbname;
+  //file2 += "-cid";
+  //file2 += g_cid;
+  //file2 += "-count";
+  //file2 += g_time;
+  //file2 += ".dat";
+  //std::ofstream outfile2(file2.data(),std::ios::app);
 
 
   for(unsigned int i=0;i<endBlobNodeList.size();i++){  
@@ -72,7 +72,7 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     
     //--enter or exit.
     if(endBlobNodeList[i].enter!=1){
-      if((trajectory[trajectory.size()-1].y+0.5*trajectory[trajectory.size()-1].height-trajectory[0].y-0.5trajectory[trajectory.size()-1].height)<0){
+      if((trajectory[trajectory.size()-1].y+0.5*trajectory[trajectory.size()-1].height-trajectory[0].y-0.5*trajectory[trajectory.size()-1].height)<0){
         endBlobNodeList[i].enter=0;
       }
     }
@@ -87,14 +87,15 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
         endBlobNodeList[i].age = 10*(random(4) + 2);
     }
 
-    outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<custom_direction<<std::endl;
+    //outfile<<g_count<<std::endl;
+    outfile<<g_count<<" "<<endBlobNodeList[i].gender<<" "<<endBlobNodeList[i].direction<<" "<<endBlobNodeList[i].age<<" "<<custom_direction<<std::endl;
 
-    outfile2<<endBlobNodeList[i].time_sequence[0]<<" "<<endBlobNodeList[i].enter<<std::endl;
+    //outfile2<<endBlobNodeList[i].time_sequence[0]<<" "<<endBlobNodeList[i].enter<<std::endl;
      
     //--update realtime data.    
   }
   outfile.close();
-  outfile2.close();
+  //outfile2.close();
 }
 
 int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
