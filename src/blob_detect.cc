@@ -96,8 +96,8 @@ PreBlob CBlobDetect::FindPreBlobByCurrentPreBlob(PreBlob current_preblob){
   int i=-1;
   while(it!=pre_preblob_list.end()){
     i++;
-    float dis_x=abs(it->blob.x+0.5*it->blob.w-current_preblob.blob.x-0.5*current_preblob.blob.w);
-    float dis_y=abs(it->blob.y+0.5*it->blob.w-current_preblob.blob.y-0.5*current_preblob.blob.h);
+    float dis_x=fabs(it->blob.x+0.5*it->blob.w-current_preblob.blob.x-0.5*current_preblob.blob.w);
+    float dis_y=fabs(it->blob.y+0.5*it->blob.w-current_preblob.blob.y-0.5*current_preblob.blob.h);
     float dis=sqrt(dis_x*dis_x+dis_y*dis_y);
     if(dis<distance){
       distance=dis;
@@ -273,10 +273,10 @@ BlobNodeList CBlobDetect::DetectPedestrian(const cv::Mat frame){
   BlobNodeList currentBlobNodeList;
   for(unsigned int i=0;i<people.size();i++){
     //inorge too big or too small
-    //if(faces[i].width>HMAX||
-    //  faces[i].width<WMIN||
-    //  faces[i].height>HMAX||
-    //  faces[i].height<HMIN){
+    //if(people[i].width>HMAX||
+    //  people[i].width<WMIN||
+    //  people[i].height>HMAX||
+    //  people[i].height<HMIN){
     //  continue;
     //}
     

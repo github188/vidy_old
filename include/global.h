@@ -43,4 +43,7 @@ extern int g_count;
 extern int g_female;
 extern int g_male;
 
+//--roi--
+extern cv::Rect g_roi;
+
 #endif //VIDY_INC_GLOBAL_H_

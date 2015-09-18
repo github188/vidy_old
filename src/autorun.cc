@@ -24,14 +24,17 @@ void CAutoRun::Process(const cv::Mat frame){
 
   //--use upper body. --
   //currentBlobNodeList=blobdetect->DetectUpperBody2(roi);
-  //--use face.--
-  currentBlobNodeList=blobdetect->DetectFace2(roi);
+  //--use face. --
+  //currentBlobNodeList=blobdetect->DetectFace2(roi);
+  //--use hog. --
+  currentBlobNodeList=blobdetect->DetectPedestrian(roi);
  
   blobtrack->GetFrame(roi);
   //--use upper body. --
-  //blobtrack->Track2(&existBlobNodeList,currentBlobNodeList);
+  blobtrack->Track2(&existBlobNodeList,currentBlobNodeList);
   //--use face --
-  blobtrack->TrackFace(&existBlobNodeList,currentBlobNodeList);
+  //blobtrack->TrackFace(&existBlobNodeList,currentBlobNodeList);
+
   endBlobNodeList=blobtrack->GetEndBlobNodeList();
 
   if(endBlobNodeList.size()>0){
@@ -56,7 +59,8 @@ void CAutoRun::GetROI(){
   cv::Rect r(r_x,r_y,r_w,400);
 
   roi_rect = r;
-
+  
+  g_roi = r;
 }
 
 void CAutoRun::Init(){

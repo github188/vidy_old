@@ -8,7 +8,7 @@
 
 #define MAXCOUNT 100
 
-#define MINCOUNT 3
+#define MINCOUNT 1
 
 namespace vidy{
 
@@ -127,19 +127,38 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
   //--remove end blobnodes from exist blobnodes.
   std::vector<BlobNode>::iterator it=existBlobNodeList->begin();
   while(it!=existBlobNodeList->end()){
-    if(((it->box.x+it->box.width)>_frame.cols-10)||
-       it->box.x<10||
-       ((it->box.y+it->box.height)>_frame.rows-10)||
+    if((((it->box.x+it->box.width)>_frame.cols-10)&&(it->box.y+it->box.height)>(int)(0.7*_frame.rows)) ||
+       (it->box.x<10&&(it->box.y+it->box.height)>(int)(0.7*_frame.rows)) ||
+       ((it->box.y+it->box.height)>_frame.rows-10)/*||
        it->box.y<10||
-       (it->trajectory).size()>MAXCOUNT){
+       (it->trajectory).size()>MAXCOUNT*/){
       if((it->trajectory).size()>MINCOUNT){
         endBlobNodeList.push_back(*it);
       }
       it=existBlobNodeList->erase(it);
       //++it;
     }else{
-      ++it;
+      if((it->trajectory).size()>MAXCOUNT){
+        it=existBlobNodeList->erase(it);
+      }else{
+        ++it;
+      }
     }
+
+    
+
+    /*if((it->box.x==g_roi.x&&(it->box.y+it->box.height)>(g_roi.y+(int)0.5*g_roi.height)) ||
+           ((it->box.x+it->box.width)==g_roi.x+g_roi.width&&(it->box.y+it->box.height)>(g_roi.y+(int)0.5*g_roi.height)) ||
+            it->box.y+it->box.height==g_roi.y+g_roi.height){
+      endBlobNodeList.push_back(*it);
+          //g_count++;
+      it=existBlobNodeList->erase(it);
+    }else if(it->trajectory.size()>MAXCOUNT){
+      it=existBlobNodeList->erase(it);
+    }else{
+      ++it;
+    }*/
+
   }
 #ifdef DEBUG
   cv::imshow("tracking",_frame);
@@ -159,12 +178,12 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
 
     //--find end blobnodes , delete from existBlobNodeList and add to endBlobNodeList.
     if((*existBlobNodeList)[i].box.width==0){
-      endBlobNodeList.push_back((*existBlobNodeList)[i]);
+      //endBlobNodeList.push_back((*existBlobNodeList)[i]);
     }
 
     //face.
     cv::Mat face_gray(_frame,(*existBlobNodeList)[i].box);
-    if(((*existBlobNodeList)[i].face).empty()){
+    /*if(((*existBlobNodeList)[i].face).empty()){
       int x,y,w,h;
       x=((*existBlobNodeList)[i].box.x-20)<0?0:((*existBlobNodeList)[i].box.x-20);
       y=((*existBlobNodeList)[i].box.y-20)<0?0:((*existBlobNodeList)[i].box.y-20);
@@ -175,10 +194,10 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
       _frame(rect).copyTo(f);
       (*existBlobNodeList)[i].face=f; 
 #ifdef DEBUG
-      cv::imshow("face",(*existBlobNodeList)[i].face);
+      //cv::imshow("face",(*existBlobNodeList)[i].face);
 #endif // DEBUG
       //}
-    }
+    }*/
 
     //update trajectory.
     (*existBlobNodeList)[i].trajectory.push_back((*existBlobNodeList)[i].box);
@@ -210,15 +229,21 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
   //--remove end blobnodes from exist blobnodes.
   std::vector<BlobNode>::iterator it=existBlobNodeList->begin();
   while(it!=existBlobNodeList->end()){
-    if(((it->box.x+it->box.width)>_frame.cols-10)||
-       it->box.x<10||
-       ((it->box.y+it->box.height)>_frame.rows-10)||
-       it->box.y<10||
-       (it->trajectory).size()>MAXCOUNT){
+    //if(((it->box.x+it->box.width)>_frame.cols-10)||
+    //   it->box.x<10||
+    //   ((it->box.y+it->box.height)>_frame.rows-10)||
+    //   it->box.y<10||
+    //   (it->trajectory).size()>MAXCOUNT){
       if((it->trajectory).size()>MINCOUNT){
-        endBlobNodeList.push_back(*it);
-      }
-      it=existBlobNodeList->erase(it);
+        if((it->box.x==g_roi.x&&(it->box.y+it->box.height)>(g_roi.y+(int)0.5*g_roi.height)) ||
+           ((it->box.x+it->box.width)==g_roi.x+g_roi.width&&(it->box.y+it->box.height)>(g_roi.y+(int)0.5*g_roi.height)) ||
+            it->box.y+it->box.height==g_roi.y+g_roi.height){
+          endBlobNodeList.push_back(*it);
+          g_count++;
+          it=existBlobNodeList->erase(it);
+        }
+     // }
+     // it=existBlobNodeList->erase(it);
       //++it;
     }else{
       ++it;
@@ -235,7 +260,7 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
 //Step 2 : Compare by haar feature.
 int CBlobTrack::CompareBlobNode(BlobNode blobnode,BlobNode compareblobnode){
   //Step 1--//
-  if(blobcompare->CompareDistance(blobnode,compareblobnode,30.00f)){
+  if(blobcompare->CompareDistance(blobnode,compareblobnode,70.00f)){
     //TODO:Step 2--// 
     return 1;
   }else{

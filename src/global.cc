@@ -22,3 +22,5 @@ int g_male=0;
 char* g_time="";
 
 char g_time_sequence[50] = "0000-00-00 00:00:00";
+
+cv::Rect g_roi;

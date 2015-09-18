@@ -129,7 +129,7 @@ void get_calibration_data(){
 
   //-- get custom pathway data --/
   //char sql_pathway[100];
-  sprintf(sql_pathway,"select calibration_data from t_calibration where cid='%s' and typeid='2' and path_type='custom'",g_cid);
+  sprintf(sql_pathway,"select calibration_data from t_calibration where cid='%s' and typeid='2' and path_type='custom' and del='0'",g_cid);
   res_pathway = dbmysql->GetData(sql_pathway);
   for(unsigned int i=0;i<res_pathway.size();i++){
     char str[100]="";
@@ -169,7 +169,7 @@ void get_calibration_data(){
     }
     g_pathways_custom.push_back(_pathway);
 #ifdef DEBUG
-    std::cout<<"G_Pathways:";
+    std::cout<<"G_Custom_Pathways:";
     for(unsigned int j=0;j<g_pathways_custom[i].size();j++){
       std::cout<<g_pathways_custom[i][j].x<<" "<<g_pathways_custom[i][j].y<<" | ";
     }
@@ -321,6 +321,12 @@ int main(int argc,char* argv[]){
  
 #ifdef DEBUG
       //cv::line(frame,cv::Point(g_door_x1,g_door_y1),cv::Point(g_door_x2,g_door_y2),cv::Scalar(255,0,0),3);
+      if(g_type){
+        char ccount[10];
+        sprintf(ccount,"count:%d",g_count);
+        cv::putText(frame,ccount,cv::Point(50,50),CV_FONT_HERSHEY_COMPLEX,2,cv::Scalar(0,255,0));
+        cv::rectangle(frame,g_roi,cv::Scalar(255,0,0),2);
+      }
       cv::imshow("frame",frame);
 #endif //DEBUG
 

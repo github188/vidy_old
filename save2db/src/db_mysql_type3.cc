@@ -121,7 +121,9 @@ void CDBMySQL3::Save2DB(){
 #endif // DEBUG
 
   this->SavePathway();
-  this->SavePathwayCustom();
+  if(custom_pathways.size()>0){
+    this->SavePathwayCustom();
+  }
   this->SaveStaytime();
   this->SaveCount();
   this->SaveHeatmap();
@@ -131,9 +133,9 @@ void CDBMySQL3::SaveStaytime(){
   //get result data.
   char g_filename_c[200];
 #ifdef SERVER
-  sprintf(g_filename_c,"/usr/local/vidy/result/%s-cid%d-pathway%s%s.dat",g_dbname,g_cid,g_date2,g_time);
+  sprintf(g_filename_c,"/usr/local/vidy/result/%s-cid%d-staytime%s%s.dat",g_dbname,g_cid,g_date2,g_time);
 #else
-  sprintf(g_filename_c,"../../result/%s-cid%d-pathway%s%s.dat",g_dbname,g_cid,g_date2,g_time);
+  sprintf(g_filename_c,"../../result/%s-cid%d-staytime%s%s.dat",g_dbname,g_cid,g_date2,g_time);
 #endif // SERVER
 
   g_filename = g_filename_c;
@@ -160,7 +162,7 @@ void CDBMySQL3::SaveStaytime(){
 
   //save data.
   float staytime_min = staytime_sec/60;
-  sprintf(sql,"insert into t_data_staytime(cid,datetime,date,time,avgstay,num) values('%d','%s %s:00:00','%s','%s:00:00','%.2f')",g_cid,g_date,g_time,g_date,g_time,staytime_min,count);
+  sprintf(sql,"insert into t_data_staytime(cid,datetime,date,time,avgstay,num) values('%d','%s %s:00:00','%s','%s:00:00','%d','%d')",g_cid,g_date,g_time,g_date,g_time,staytime_sec,count);
 
 #ifdef DEBUG
   printf("%s",sql);
@@ -168,12 +170,11 @@ void CDBMySQL3::SaveStaytime(){
 
   this->InsertData(sql);
 
-
 }
 
 void CDBMySQL3::SaveCount(){
   //save data.
-  sprintf(sql,"insert into t_data_count(cid,datetime,date,time,count) values('%d','%s %s:00:00','%s','%s:00:00','%d')",g_cid,g_date,g_time,g_date,g_time,count);
+  sprintf(sql,"insert into t_data_count(uuid,cid,datetime,date,time,count) values(UUID(),'%d','%s %s:00:00','%s','%s:00:00','%d')",g_cid,g_date,g_time,g_date,g_time,count);
 
 #ifdef DEBUG
   printf("%s",sql);
@@ -216,7 +217,7 @@ void CDBMySQL3::SaveHeatmap(){
   sql += ":00:00',GeomFromText('MULTIPOINT(";
   while(!inFile.eof()){
     int x,y;
-    float value,radius;
+    int value,radius;
     inFile>>x>>y>>value>>radius;
     char _sql[50];
     sprintf(_sql,"%d %d,%d %d,",x,y,(int)value,radius);

@@ -65,7 +65,7 @@ CDBMySQL1::CDBMySQL1(){
 
   //--get custom pathway data from database/
   //char sql[100];
-  sprintf(sql,"select calibration_data from t_calibration where cid='%d' and typeid='2' and path_type='custom'",g_cid);
+  sprintf(sql,"select calibration_data from t_calibration where cid='%d' and typeid='2' and path_type='custom' and del='0'",g_cid);
   res = this->GetData(sql);
   for(unsigned int i=0; i<res.size();i++){
     std::vector<cv::Point> pathway;
