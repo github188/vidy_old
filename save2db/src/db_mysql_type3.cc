@@ -37,7 +37,7 @@ CDBMySQL3::CDBMySQL3(){
         case 3:{
           break;
         }
-        case 4:{
+        case 0:{
           int len = sizeof(p);
           char* y = new char(len-3);
           y = p+1;
@@ -88,7 +88,7 @@ CDBMySQL3::CDBMySQL3(){
         case 3:{
           break;
         }
-        case 4:{
+        case 0:{
           int len = sizeof(p);
           char* y = new char(len-3);
           y = p+1;
@@ -160,7 +160,7 @@ void CDBMySQL3::SaveStaytime(){
 
   //save data.
   float staytime_min = staytime_sec/60;
-  sprintf(sql,"insert into t_data_staytime(cid,datetime,date,time,avgstay) values('%d','%s %s:00:00','%s','%s:00:00','%.2f')",g_cid,g_date,g_time,g_date,g_time,staytime_min);
+  sprintf(sql,"insert into t_data_staytime(cid,datetime,date,time,avgstay,num) values('%d','%s %s:00:00','%s','%s:00:00','%.2f')",g_cid,g_date,g_time,g_date,g_time,staytime_min,count);
 
 #ifdef DEBUG
   printf("%s",sql);
@@ -245,6 +245,9 @@ void CDBMySQL3::SavePathway(){
 #endif
 
   std::vector<int> _directions(pathways.size()+1);
+  for(unsigned int i=0;i<_directions.size();i++){
+     _directions[i]=0;
+  }
   directions = _directions;
 
   std::ifstream inFile(g_filename,std::ios::in);
@@ -279,7 +282,7 @@ void CDBMySQL3::SavePathway(){
     std::string points;
     for(unsigned int j=0;j<pathways[i].size();j++){
       char point[50];
-      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",i,"\"","\"",pathways[i][j].x,"\"","\"",i,"\"","\"",pathways[i][j].y,"\"");
+      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",j+1,"\"","\"",pathways[i][j].x,"\"","\"",j+1,"\"","\"",pathways[i][j].y,"\"");
       points += point;
       if(j!=pathways[i].size()-1){
         points += ",";
@@ -349,7 +352,7 @@ void CDBMySQL3::SavePathwayCustom(){
     std::string points;
     for(unsigned int j=0;j<pathways[i].size();j++){
       char point[50];
-      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",i,"\"","\"",pathways[i][j].x,"\"","\"",i,"\"","\"",pathways[i][j].y,"\"");
+      sprintf(point,"%sx%d%s:%s%d%s,%sy%d%s:%s%d%s","\"",j+1,"\"","\"",pathways[i][j].x,"\"","\"",j+1,"\"","\"",pathways[i][j].y,"\"");
       points += point;
       if(j!=pathways[i].size()-1){
         points += ",";
@@ -367,6 +370,7 @@ void CDBMySQL3::SavePathwayCustom(){
     printf("%s\n",sql.data());
 #endif //DEBUG
     this->InsertData(sql.data());
+
   }
 }
 
