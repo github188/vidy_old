@@ -32,6 +32,7 @@ protected:
   void Init();
   void GetROI();
 private:
+  CFGDetect* fgdetect;
   CBlobDetect* blobdetect;
   CBlobTrack* blobtrack;
   CBlobGenerate* blobgenerate;
@@ -39,6 +40,7 @@ private:
   BlobNodeList currentBlobNodeList;
   BlobNodeList endBlobNodeList;
   cv::Rect roi_rect;
+  int control_frame;
 }; //class CAutoRun
 
 class CAutoRun2 : public IAutoRun{

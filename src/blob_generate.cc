@@ -37,9 +37,9 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
   std::ofstream outfile(file.data(),std::ios::app);
 
 #ifdef SERVER
-  std::string file2="/usr/local/vidy/result/";
+  //std::string file2="/usr/local/vidy/result/";
 #else
-  std::string file2="../result/";
+  //std::string file2="../result/";
 #endif // SERVER
   //file2 += g_dbname;
   //file2 += "-cid";
@@ -50,7 +50,7 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
   //std::ofstream outfile2(file2.data(),std::ios::app);
 
 
-  for(unsigned int i=0;i<endBlobNodeList.size();i++){  
+  for(unsigned int i=0;i<1;i++){  
     //--gender detect.
     if(!(endBlobNodeList[i].face.empty())){
       cv::Mat face_gray;
@@ -130,6 +130,20 @@ int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
   //default:0, if direction=0, it means this trajectory is not in each of the pathways.
   //pathway 1 : direction=1
   //pathway 2 : direction=2
+
+  //temporary use.
+  if(trajectory[trajectory.size()-1].x<g_roi.x+100){
+    direction=1;
+  }else if((trajectory[trajectory.size()-1].x+trajectory[trajectory.size()-1].width)>g_roi.x+g_roi.width-100){
+    if(g_pathways.size()<3){
+      direction=2;
+    }else{
+      direction=3; 
+    }
+  }else{
+    direction=2;
+  }
+
   return direction;
 }
 

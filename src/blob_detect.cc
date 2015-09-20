@@ -273,12 +273,12 @@ BlobNodeList CBlobDetect::DetectPedestrian(const cv::Mat frame){
   BlobNodeList currentBlobNodeList;
   for(unsigned int i=0;i<people.size();i++){
     //inorge too big or too small
-    //if(people[i].width>HMAX||
-    //  people[i].width<WMIN||
-    //  people[i].height>HMAX||
-    //  people[i].height<HMIN){
-    //  continue;
-    //}
+    if(people[i].width>HMAX||
+      people[i].width<WMIN||
+      people[i].height>HMAX||
+      people[i].height<HMIN){
+      continue;
+    }
     
     people[i].x=people[i].x>0?people[i].x:0;
     people[i].y=people[i].y>0?people[i].y:0;

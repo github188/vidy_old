@@ -38,15 +38,15 @@ void CFGDetect::ProcessMOG(const cv::Mat& frame,cv::Mat* mask){
   cv::Mat _mask;
   mog(frame,_mask,0.1);
   for(int i=0;i<3;i++){
-    cv::dilate(_mask,_mask,cv::Mat(),cv::Point(1,1),1);
     cv::erode(_mask,_mask,cv::Mat(),cv::Point(1,1),1);
+    cv::dilate(_mask,_mask,cv::Mat(),cv::Point(1,1),1);
   }
   std::vector<std::vector<cv::Point> > contours,contours2;
   cv::findContours(_mask,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
   std::vector<std::vector<cv::Point> >::iterator it=contours.begin();
   while(it!=contours.end()){
     cv::Rect r0=boundingRect(*it);
-    if(it->size()>30){
+    if(it->size()>500){
       contours2.push_back(*it);
       ++it;
     }else{

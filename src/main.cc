@@ -330,10 +330,14 @@ int main(int argc,char* argv[]){
       cv::imshow("frame",frame);
 #endif //DEBUG
 
+#ifdef SERVER
       if(hour>=8 && hour<23){
         //--process runs.
         pAutoRun->Process(frame);
       }
+#else
+        pAutoRun->Process(frame);
+#endif // SERVER
 
       double finish_time=clock();
 

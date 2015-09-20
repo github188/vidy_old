@@ -6,7 +6,7 @@
 #include <iostream>
 #include <time.h>
 
-#define MAXCOUNT 100
+#define MAXCOUNT 30
 
 #define MINCOUNT 1
 
@@ -127,8 +127,8 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
   //--remove end blobnodes from exist blobnodes.
   std::vector<BlobNode>::iterator it=existBlobNodeList->begin();
   while(it!=existBlobNodeList->end()){
-    if((((it->box.x+it->box.width)>_frame.cols-10)&&(it->box.y+it->box.height)>(int)(0.7*_frame.rows)) ||
-       (it->box.x<10&&(it->box.y+it->box.height)>(int)(0.7*_frame.rows)) ||
+    if((((it->box.x+it->box.width)>_frame.cols-10)&&(it->box.y+it->box.height)>(int)(0.85*_frame.rows)) ||
+       (it->box.x<10&&(it->box.y+it->box.height)>(int)(0.85*_frame.rows)) ||
        ((it->box.y+it->box.height)>_frame.rows-10)/*||
        it->box.y<10||
        (it->trajectory).size()>MAXCOUNT*/){
@@ -260,7 +260,7 @@ void CBlobTrack::TrackFace(BlobNodeList* existBlobNodeList,BlobNodeList& current
 //Step 2 : Compare by haar feature.
 int CBlobTrack::CompareBlobNode(BlobNode blobnode,BlobNode compareblobnode){
   //Step 1--//
-  if(blobcompare->CompareDistance(blobnode,compareblobnode,70.00f)){
+  if(blobcompare->CompareDistance(blobnode,compareblobnode,100.00f)){
     //TODO:Step 2--// 
     return 1;
   }else{
