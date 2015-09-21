@@ -9,3 +9,5 @@ Makefile.debug
 /save2db/Makefile
 /save2db/obj/
 /save2db/bin/
+Makefile_osx
+/save2db/Makefile_osx

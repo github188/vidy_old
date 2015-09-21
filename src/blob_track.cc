@@ -129,17 +129,23 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
   while(it!=existBlobNodeList->end()){
     if((((it->box.x+it->box.width)>_frame.cols-10)&&(it->box.y+it->box.height)>(int)(0.85*_frame.rows)) ||
        (it->box.x<10&&(it->box.y+it->box.height)>(int)(0.85*_frame.rows)) ||
-       ((it->box.y+it->box.height)>_frame.rows-10)/*||
-       it->box.y<10||
+       ((it->box.y+it->box.height)>_frame.rows-10) ||
+       (it->box.y<10) || 
+       ((it->box.x<10)&&(it->box.y<(int)(0.3*_frame.rows))) || 
+       ((it->box.x+it->box.width>_frame.cols-10)&&(it->box.y<(int(0.3*_frame.rows)))) /*||
        (it->trajectory).size()>MAXCOUNT*/){
-      if((it->trajectory).size()>MINCOUNT){
+      if((it->trajectory).size()>MINCOUNT && (fabs((it->trajectory)[0].y+0.5*(it->trajectory)[0].height-it->box.y-0.5*it->box.height)>30.00f)){
         endBlobNodeList.push_back(*it);
       }
       it=existBlobNodeList->erase(it);
       //++it;
     }else{
-      if((it->trajectory).size()>MAXCOUNT){
-        it=existBlobNodeList->erase(it);
+      if(g_type==1){
+        if((it->trajectory).size()>MAXCOUNT){
+          it=existBlobNodeList->erase(it);
+        }else{
+          ++it;
+        }
       }else{
         ++it;
       }

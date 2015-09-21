@@ -32,15 +32,15 @@ int main(int argc,char* argv[]){
   vidy::ISave2DB* save2db;
   switch(atoi(argv[3])){
     case 1:{
-      save2db = new vidy::CDBMySQL1();
+      //save2db = new vidy::CDBMySQL1();
       break;
     }
     case 2:{
-      save2db = new vidy::CDBMySQL2();
+      //save2db = new vidy::CDBMySQL2();
       break;
     }
     case 3:{
-      save2db = new vidy::CDBMySQL3();
+      //save2db = new vidy::CDBMySQL3();
       break;
     }
     default:{
@@ -75,7 +75,7 @@ int main(int argc,char* argv[]){
    
     //save data in every hour. 
 #ifdef SERVER
-    if(current_hour!=previous_hour&&previous_hour!=0&&current_hour>8&&current_hour<22){ 
+    if(current_hour!=previous_hour&&previous_hour!=0&&current_hour>8&&current_hour<23){ 
 #else
     if(current_hour!=previous_hour){
 #endif // SERVER
@@ -84,26 +84,26 @@ int main(int argc,char* argv[]){
 #ifdef DEBUG
       printf("save2db->Save2DB()\n");
 #endif //DEBUG
-      if(current_hour==9){
-        //re-connection.
-        switch(atoi(argv[3])){
-          case 1:{
-            save2db = new vidy::CDBMySQL1();
-            break;
-          }
-          case 2:{
-            save2db = new vidy::CDBMySQL2();
-            break;
-          }
-          case 3:{
-            save2db = new vidy::CDBMySQL3();
-            break;
-          }
-       }
+      //re-connection.
+      switch(atoi(argv[3])){
+        case 1:{
+          save2db = new vidy::CDBMySQL1();
+          break;
+        }
+        case 2:{
+          save2db = new vidy::CDBMySQL2();
+          break;
+        }
+        case 3:{
+          save2db = new vidy::CDBMySQL3();
+          break;
+        }
       }
       //--save data
       save2db->Save2DB();
-    }
+      //--deconstruct save2db
+      delete save2db;
+    } 
 
     previous_hour=current_hour;
 

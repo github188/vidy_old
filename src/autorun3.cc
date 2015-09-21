@@ -19,13 +19,16 @@ CAutoRun3::~CAutoRun3(){
 void CAutoRun3::Process(const cv::Mat frame){
   //-- use hog detect. --
   currentBlobNodeList=blobdetect->DetectPedestrian(frame);
+
+  blobtrack->GetFrame(frame);
   blobtrack->Track2(&existBlobNodeList,currentBlobNodeList); 
 
   endBlobNodeList=blobtrack->GetEndBlobNodeList(); 
 
   if(endBlobNodeList.size()>0){
-    blobgenerate->Generate2(endBlobNodeList);
+    blobgenerate->Generate3(endBlobNodeList);
   }
+
 }
 
 void CAutoRun3::Init(){

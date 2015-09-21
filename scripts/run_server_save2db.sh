@@ -1,9 +1,16 @@
 #!/bin/sh
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 8 1 &
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 9 1 &
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 15 1 &
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 16 1 &
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 21 1 &
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 22 1 &
-/usr/local/vidy/save2db/bin/Vidy_Save2DB CTCCHZ 23 1 &
+i=1
+path="/usr/local/vidy/scripts"
+cat $path/config.conf | while read line
+do
+b=$(($i%2))
+if [ $b -eq 1 ] ; then
+id=$line
+else
+type=$line
+echo "$path/deamon_save2db.sh $id $type &"
+sh $path/deamon_save2db.sh $id $type &
+fi
+i=$(($i+1))
+done
 

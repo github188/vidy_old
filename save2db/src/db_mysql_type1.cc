@@ -164,7 +164,7 @@ void CDBMySQL1::Save2DB(){
   if(!inFile.is_open()){
     printf("no file at %s %s:00:00..\n",g_date,g_time);
     //return;
-  }
+  }else{
  
   while(!inFile.eof()){
     //get result data.
@@ -208,6 +208,7 @@ void CDBMySQL1::Save2DB(){
     }
   }
   inFile.close();
+  }
 
 #ifdef DEBUG
   printf("SaveCount()..\n");

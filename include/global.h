@@ -40,8 +40,15 @@ extern char* g_time;
 
 //--data--
 extern int g_count;
+extern int g_enter;
+extern int g_exit;
 extern int g_female;
 extern int g_male;
+extern int g_age1; //age less than 20.
+extern int g_age2; //age between 20-30.
+extern int g_age3; //age between 30-40.
+extern int g_age4; //age between 40-50.
+extern int g_age5; //age more than 50.
 
 //--roi--
 extern cv::Rect g_roi;

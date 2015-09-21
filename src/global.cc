@@ -16,8 +16,15 @@ std::vector<Pathway> g_pathways_custom;
 std::vector<cv::Point> g_area;
 
 int g_count=0;
+int g_enter=0;
+int g_exit=0;
 int g_female=0;
 int g_male=0;
+int g_age1=0;
+int g_age2=0;
+int g_age3=0;
+int g_age4=0;
+int g_age5=0;
 
 char* g_time="";
 

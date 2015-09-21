@@ -287,6 +287,7 @@ int main(int argc,char* argv[]){
 
   if(!capture.isOpened()){
     std::cout<<"remote address error!"<<std::endl;
+    return 0;
   }
 
   char key;
@@ -303,9 +304,8 @@ int main(int argc,char* argv[]){
       capture.read(frame);
 
       if(frame.empty()){
-        usleep(1000000);
         std::cout<<"no frame"<<std::endl;
-        continue;
+        return 0;
       }
 
       //--get current time--
@@ -314,24 +314,55 @@ int main(int argc,char* argv[]){
       strftime(ctime,sizeof(ctime),"%Y%m%d%H",localtime(&t));
       g_time=ctime;
       
-      int hour;
+      int hour,pre_hour;
       char chour[20];
       strftime(chour,sizeof(chour),"%H",localtime(&t));
       hour = atoi(chour);
  
 #ifdef DEBUG
       //cv::line(frame,cv::Point(g_door_x1,g_door_y1),cv::Point(g_door_x2,g_door_y2),cv::Scalar(255,0,0),3);
-      if(g_type){
+      if(g_type==1){
         char ccount[10];
-        sprintf(ccount,"count:%d",g_count);
-        cv::putText(frame,ccount,cv::Point(50,50),CV_FONT_HERSHEY_COMPLEX,2,cv::Scalar(0,255,0));
+        char center[10];
+        char cexit[10];
+        char cfemale[10];
+        char cmale[10];
+        char cage1[10];
+        char cage2[10];
+        char cage3[10];
+        char cage4[10];
+        char cage5[10];
+        sprintf(ccount,"total:%d",g_count);
+        sprintf(center,"enter:%d",g_enter);
+        sprintf(cexit,"exit:%d",g_exit);
+        sprintf(cfemale,"female:%d",g_female);
+        sprintf(cmale,"male:%d",g_male);
+        sprintf(cage1,"0-20:%d",g_age1);
+        sprintf(cage2,"20-30:%d",g_age2);
+        sprintf(cage3,"30-40:%d",g_age3);
+        sprintf(cage4,"40-50:%d",g_age4);
+        sprintf(cage5,">50:%d",g_age5);
+        cv::putText(frame,ccount,cv::Point(50,50),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,center,cv::Point(50,100),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cexit,cv::Point(50,150),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cmale,cv::Point(50,200),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cfemale,cv::Point(50,250),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cage1,cv::Point(50,300),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cage2,cv::Point(50,350),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cage3,cv::Point(50,400),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cage4,cv::Point(50,450),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,cage5,cv::Point(50,500),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::rectangle(frame,g_roi,cv::Scalar(255,0,0),2);
       }
       cv::imshow("frame",frame);
 #endif //DEBUG
 
 #ifdef SERVER
-      if(hour>=8 && hour<23){
+      if(hour>=8 && hour<22){
+        //re-connect every day.
+        if(hour==8&&hour!=pre_hour){
+          break;
+        }
         //--process runs.
         pAutoRun->Process(frame);
       }
@@ -349,6 +380,8 @@ int main(int argc,char* argv[]){
       
       //-- time control --/
       key=cv::waitKey(1);
+
+      pre_hour = hour;
 
 #ifdef DEBUG
       if(key=='s'){

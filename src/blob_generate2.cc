@@ -200,7 +200,9 @@ void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
   file4 += ".dat";
   std::ofstream outfile4(file.data(),std::ios::app);
 
-  for(unsigned int i=0;i<endBlobNodeList.size();i++){ 
+  g_count++;
+
+  for(unsigned int i=0;i<1;i++){ 
     //get direction.
     int direction = this->GetDirection2(endBlobNodeList[i].trajectory);
     endBlobNodeList[i].direction = direction;
@@ -213,7 +215,7 @@ void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
     //get staytime.
     int staytime = this->GetStayTime(endBlobNodeList[i].time_sequence); 
     //output the result.
-    outfile2<<staytime<<std::endl;
+    outfile2<<g_count<<" "<<staytime<<std::endl;
     //get heatmap_one
     std::vector<Heatmap> heatmap_data = this->GetHeatmapResult(endBlobNodeList[i].time_sequence,endBlobNodeList[i].trajectory);
     //output the result.

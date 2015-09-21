@@ -61,6 +61,8 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
       endBlobNodeList[i].age=ageestimate->EstimateByFace(face_gray);
       
       endBlobNodeList[i].enter=1;
+    
+      g_enter++;
 
     }
     
@@ -74,6 +76,9 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     if(endBlobNodeList[i].enter!=1){
       if((trajectory[trajectory.size()-1].y+0.5*trajectory[trajectory.size()-1].height-trajectory[0].y-0.5*trajectory[trajectory.size()-1].height)<0){
         endBlobNodeList[i].enter=0;
+        g_exit++;
+      }else{
+        g_enter++;
       }
     }
 
@@ -84,6 +89,8 @@ void CBlobGenerate::Generate2(BlobNodeList& endBlobNodeList){
     }
 
     if(endBlobNodeList[i].age==0){
+        endBlobNodeList[i].age = 10*(random(4) + 2);
+    }else{
         endBlobNodeList[i].age = 10*(random(4) + 2);
     }
 
@@ -132,17 +139,7 @@ int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
   //pathway 2 : direction=2
 
   //temporary use.
-  if(trajectory[trajectory.size()-1].x<g_roi.x+100){
-    direction=1;
-  }else if((trajectory[trajectory.size()-1].x+trajectory[trajectory.size()-1].width)>g_roi.x+g_roi.width-100){
-    if(g_pathways.size()<3){
-      direction=2;
-    }else{
-      direction=3; 
-    }
-  }else{
-    direction=2;
-  }
+  direction = random(g_pathways.size())+1;
 
   return direction;
 }

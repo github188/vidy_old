@@ -3,7 +3,7 @@
 //Author: Yun Luo(lauren.luo@extremevision.mo)
 
 #ifndef VIDY_SAVE2DB_INC_CONFIGS_H_
-#define VIDY_SAVE2DB_INC_CONFIGS_h_
+#define VIDY_SAVE2DB_INC_CONFIGS_H_
 
 extern char* g_dbaddr;
 extern char* g_dbuser;
