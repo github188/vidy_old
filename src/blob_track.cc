@@ -79,7 +79,7 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
 
     //--find end blobnodes , delete from existBlobNodeList and add to endBlobNodeList.
     if((*existBlobNodeList)[i].box.width==0){
-      endBlobNodeList.push_back((*existBlobNodeList)[i]);
+      //endBlobNodeList.push_back((*existBlobNodeList)[i]);
     }
 
     //face detect.
@@ -127,31 +127,39 @@ void CBlobTrack::Track2(BlobNodeList* existBlobNodeList,BlobNodeList& currentBlo
   //--remove end blobnodes from exist blobnodes.
   std::vector<BlobNode>::iterator it=existBlobNodeList->begin();
   while(it!=existBlobNodeList->end()){
+   if(g_type==1){
     if((((it->box.x+it->box.width)>_frame.cols-10)&&(it->box.y+it->box.height)>(int)(0.85*_frame.rows)) ||
        (it->box.x<10&&(it->box.y+it->box.height)>(int)(0.85*_frame.rows)) ||
        ((it->box.y+it->box.height)>_frame.rows-10) ||
        (it->box.y<10) || 
        ((it->box.x<10)&&(it->box.y<(int)(0.3*_frame.rows))) || 
        ((it->box.x+it->box.width>_frame.cols-10)&&(it->box.y<(int(0.3*_frame.rows)))) /*||
-       (it->trajectory).size()>MAXCOUNT*/){
+       (it->trajectory).size()>MAXCOUNT*/)
+    {
       if((it->trajectory).size()>MINCOUNT && (fabs((it->trajectory)[0].y+0.5*(it->trajectory)[0].height-it->box.y-0.5*it->box.height)>30.00f)){
         endBlobNodeList.push_back(*it);
       }
       it=existBlobNodeList->erase(it);
       //++it;
     }else{
-      if(g_type==1){
-        if((it->trajectory).size()>MAXCOUNT){
-          it=existBlobNodeList->erase(it);
-        }else{
-          ++it;
-        }
+      if((it->trajectory).size()>MAXCOUNT){
+        it=existBlobNodeList->erase(it);
       }else{
         ++it;
       }
     }
-
-    
+   }else if(g_type==3){
+     if(it->box.x<50 || it->box.x+it->box.width>_frame.cols-50 || it->box.y+it->box.height>_frame.rows-50){
+       endBlobNodeList.push_back(*it);
+       it=existBlobNodeList->erase(it);
+     }else{
+       if((it->trajectory).size()>3*MAXCOUNT){
+         it=existBlobNodeList->erase(it);
+       }else{
+         ++it;
+       }
+     }
+   }
 
     /*if((it->box.x==g_roi.x&&(it->box.y+it->box.height)>(g_roi.y+(int)0.5*g_roi.height)) ||
            ((it->box.x+it->box.width)==g_roi.x+g_roi.width&&(it->box.y+it->box.height)>(g_roi.y+(int)0.5*g_roi.height)) ||

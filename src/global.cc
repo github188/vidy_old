@@ -26,6 +26,8 @@ int g_age3=0;
 int g_age4=0;
 int g_age5=0;
 
+int g_direction=0;
+
 char* g_time="";
 
 char g_time_sequence[50] = "0000-00-00 00:00:00";

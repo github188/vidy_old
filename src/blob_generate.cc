@@ -132,6 +132,7 @@ int CBlobGenerate::GetDirection(std::vector<cv::Rect> trajectory){
       distance = _distance;
       direction = i+1;
     }
+    g_direction = direction;
   }
   //direction principal:
   //default:0, if direction=0, it means this trajectory is not in each of the pathways.

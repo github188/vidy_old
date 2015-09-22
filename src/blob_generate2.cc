@@ -5,6 +5,11 @@
 #include "blob_generate.h"
 #include "global.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #define HEATMAP_RADIUS 50
 #define HEATMAP_MIN_SEC 5
 
@@ -100,21 +105,92 @@ int CBlobGenerate::GetDirectionCustom(std::vector<cv::Rect> trajectory){
 }
 
 int CBlobGenerate::GetStayTime(std::vector<std::string> time_sequence){
+#ifdef DEBUG
+  std::cout<<time_sequence.size()<<std::endl;
+#endif // DEBUG
+if(time_sequence.size()>5){
   std::string time_start = time_sequence[0];
   std::string time_end = time_sequence[time_sequence.size()-1];
-  char* p_start = new char(2);
-  p_start = (char*)(time_start.data()+12);
-  int hour_start = atoi(p_start);
-  int minue_start = atoi(p_start+3);
-  int second_start = atoi(p_start+3);
-  delete p_start;
-  char* p_end = new char(2);
-  p_end = (char*)(time_end.data()+12);
-  int hour_end = atoi(p_end);
-  int minue_end = atoi(p_end+3);
-  int second_end = atoi(p_end+3);
-  int staytime = 3600*(hour_end-hour_start)+60*(minue_start-minue_end)+second_end-second_start;
+#ifdef DEBUG
+  std::cout<<"time_start:"<<time_start<<std::endl;
+  std::cout<<"time_end:"<<time_end<<std::endl;
+#endif // DEBUG
+  int hour_start,minue_start,second_start,hour_end,minue_end,second_end;
+  const char* split=": ";
+  char* p;
+  char str[100];
+  sprintf(str,"%s",time_start.data());
+  p=strtok(str,split);
+  int _count=0;
+  while(p!=NULL){
+    _count++;
+    switch(_count%4){
+      case 1:{
+        break;
+      }
+      case 2:{
+        hour_start = atoi(p);
+        break;
+      }
+      case 3:{
+        minue_start = atoi(p);
+        break;
+      }
+      case 0:{
+        second_start = atoi(p);
+        break;
+      }
+    }
+    p = strtok(NULL,split);
+  }
+  //str[100]="";
+  sprintf(str,"%s",time_end.data());
+  p=strtok(str,split);                                                  
+  _count=0;
+  while(p!=NULL){                                                                     
+     _count++;
+     switch(_count%4){                                                                 
+       case 1:{                                                                        
+         break;                                                                        
+       }
+       case 2:{                                                  
+         hour_end = atoi(p);                                                                                                                       
+         break;                                                                        
+       }
+       case 3:{    
+         minue_end = atoi(p);                                                                                                                   
+         break;                                                                        
+       }
+       case 0:{
+         second_end = atoi(p);                                                                                                                 
+         break;                                                                        
+       }                                                                               
+     } 
+     p = strtok(NULL,split);                                                           
+   }         
+ 
+#ifdef DEBUG
+  std::cout<<"hour:"<<hour_start<<" "<<hour_end<<std::endl;
+  std::cout<<"minue:"<<minue_start<<" "<<minue_end<<std::endl;
+  std::cout<<"second:"<<second_start<<" "<<second_end<<std::endl;
+#endif // DEBUG
+  //cal staytime.
+  if(second_end<second_start){
+    second_end += 60;
+    minue_end -= 1;
+  }
+  if(minue_end<minue_start){
+    minue_end += 60;
+    hour_end -= 1;
+  }
+  int staytime = 3600*(hour_end-hour_start)+60*(minue_end-minue_start)+second_end-second_start;
+#ifdef DEBUG
+  std::cout<<"stay time:"<<staytime<<std::endl;
+#endif // DEBUG
   return staytime;
+}else{
+  return 0;
+}
 }
 
 std::vector<Heatmap> CBlobGenerate::GetHeatmapResult(std::vector<std::string> time_sequence,std::vector<cv::Rect> trajectory)
@@ -201,8 +277,12 @@ void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
   std::ofstream outfile4(file.data(),std::ios::app);
 
   g_count++;
+#ifdef DEBUG
+  std::cout<<"count:"<<g_count<<std::endl;
+#endif
 
-  for(unsigned int i=0;i<1;i++){ 
+  for(unsigned int i=0;i<endBlobNodeList.size();i++){ 
+   if(i==0){
     //get direction.
     int direction = this->GetDirection2(endBlobNodeList[i].trajectory);
     endBlobNodeList[i].direction = direction;
@@ -215,7 +295,13 @@ void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
     //get staytime.
     int staytime = this->GetStayTime(endBlobNodeList[i].time_sequence); 
     //output the result.
-    outfile2<<g_count<<" "<<staytime<<std::endl;
+#ifdef DEBUG
+    std::cout<<"staytime:"<<staytime<<std::endl;
+#endif
+    if(staytime>5){
+      outfile2<<g_count<<" "<<staytime<<std::endl;
+    }
+   }
     //get heatmap_one
     std::vector<Heatmap> heatmap_data = this->GetHeatmapResult(endBlobNodeList[i].time_sequence,endBlobNodeList[i].trajectory);
     //output the result.

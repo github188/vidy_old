@@ -321,7 +321,7 @@ int main(int argc,char* argv[]){
  
 #ifdef DEBUG
       //cv::line(frame,cv::Point(g_door_x1,g_door_y1),cv::Point(g_door_x2,g_door_y2),cv::Scalar(255,0,0),3);
-      if(g_type==1){
+      if(g_type==1 || 3){
         char ccount[10];
         char center[10];
         char cexit[10];
@@ -332,6 +332,8 @@ int main(int argc,char* argv[]){
         char cage3[10];
         char cage4[10];
         char cage5[10];
+        char direction_num[10];
+        char direction_order[10];
         sprintf(ccount,"total:%d",g_count);
         sprintf(center,"enter:%d",g_enter);
         sprintf(cexit,"exit:%d",g_exit);
@@ -342,6 +344,8 @@ int main(int argc,char* argv[]){
         sprintf(cage3,"30-40:%d",g_age3);
         sprintf(cage4,"40-50:%d",g_age4);
         sprintf(cage5,">50:%d",g_age5);
+        sprintf(direction_num,"p num:%d",g_pathways.size());
+        sprintf(direction_order,"p_order:%d",g_direction);
         cv::putText(frame,ccount,cv::Point(50,50),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,center,cv::Point(50,100),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,cexit,cv::Point(50,150),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
@@ -352,6 +356,8 @@ int main(int argc,char* argv[]){
         cv::putText(frame,cage3,cv::Point(50,400),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,cage4,cv::Point(50,450),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,cage5,cv::Point(50,500),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,direction_num,cv::Point(50,550),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,direction_order,cv::Point(50,600),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::rectangle(frame,g_roi,cv::Scalar(255,0,0),2);
       }
       cv::imshow("frame",frame);

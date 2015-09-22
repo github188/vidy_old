@@ -82,12 +82,14 @@ protected:
   //TODO:Get Pathways.
   void GetPathways();
 private:
+  CFGDetect* fgdetect;
   CBlobDetect* blobdetect;
   CBlobTrack* blobtrack;
   CBlobGenerate* blobgenerate;
   BlobNodeList existBlobNodeList;
   BlobNodeList currentBlobNodeList;
   BlobNodeList endBlobNodeList;
+  int control_frame;
 }; //class CAutoRun3
 
 } //namespace vidy
