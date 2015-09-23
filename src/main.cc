@@ -366,9 +366,9 @@ int main(int argc,char* argv[]){
 #ifdef SERVER
       if(hour>=8 && hour<22){
         //re-connect every day.
-        if(hour==8&&hour!=pre_hour){
-          break;
-        }
+        //if(hour==8&&hour!=pre_hour&&pre_hour!=0){
+        //  break;
+        //}
         //--process runs.
         pAutoRun->Process(frame);
       }
