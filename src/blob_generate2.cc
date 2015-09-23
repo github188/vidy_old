@@ -10,6 +10,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#define random(x) (rand()%x)
+
 #define HEATMAP_RADIUS 50
 #define HEATMAP_MIN_SEC 5
 
@@ -55,6 +57,7 @@ int CBlobGenerate::GetDirection2(std::vector<cv::Rect> trajectory){
       max_distance = _distance;
       direction = n+1;
     } 
+    direction = random(g_pathways.size())+1;
   }
   return direction;
 }
