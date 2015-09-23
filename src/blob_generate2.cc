@@ -285,7 +285,7 @@ void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
 #endif
 
   for(unsigned int i=0;i<endBlobNodeList.size();i++){ 
-   if(i==0){
+   //if(i==0){
     //get direction.
     int direction = this->GetDirection2(endBlobNodeList[i].trajectory);
     endBlobNodeList[i].direction = direction;
@@ -304,7 +304,7 @@ void CBlobGenerate::Generate3(BlobNodeList& endBlobNodeList){
     if(staytime>5){
       outfile2<<g_count<<" "<<staytime<<std::endl;
     }
-   }
+   //}
     //get heatmap_one
     std::vector<Heatmap> heatmap_data = this->GetHeatmapResult(endBlobNodeList[i].time_sequence,endBlobNodeList[i].trajectory);
     //output the result.
