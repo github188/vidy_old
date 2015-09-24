@@ -50,7 +50,9 @@ extern int g_age3; //age between 30-40.
 extern int g_age4; //age between 40-50.
 extern int g_age5; //age more than 50.
 
+//--default direction && custom direction--
 extern int g_direction;
+extern int g_direction_custom;
 
 //--roi--
 extern cv::Rect g_roi;

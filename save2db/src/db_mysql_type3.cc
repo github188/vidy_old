@@ -159,6 +159,10 @@ void CDBMySQL3::SaveStaytime(){
     staytime_sec = (staytime_sec*(count-1)+_staytime_sec)/count;
   }
   inFile.close();
+  if(count==1){
+    count=0;
+    staytime_sec=0;
+  }
 
   //save data.
   float staytime_min = staytime_sec/60;
@@ -215,15 +219,21 @@ void CDBMySQL3::SaveHeatmap(){
   sql += "','";
   sql += g_time;
   sql += ":00:00',GeomFromText('MULTIPOINT(";
+  int count_tmp=0;
   while(!inFile.eof()){
+    count_tmp++;
     int x,y;
     int value,radius;
     inFile>>x>>y>>value>>radius;
     char _sql[50];
-    sprintf(_sql,"%d %d,%d %d,",x,y,(int)value,radius);
+    if(count_tmp==1){
+      sprintf(_sql,"%d %d,%d %d",x,y,(int)value,radius);
+    }else{
+      sprintf(_sql,",%d %d,%d %d",x,y,(int)value,radius);
+    }
     sql += _sql;
   }
-  sql +="0 0,0 0)',0))";
+  sql +=")',0))";
 #ifdef DEBUG
   printf("%s\n",sql.data());
 #endif

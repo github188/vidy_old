@@ -27,6 +27,7 @@ int g_age4=0;
 int g_age5=0;
 
 int g_direction=0;
+int g_direction_custom=0;
 
 char* g_time="";
 

@@ -175,9 +175,7 @@ void get_calibration_data(){
     }
     std::cout<<std::endl;
 #endif
-
   }
-
 
   //note. only 1 area situation.
   //-- get area data --/
@@ -227,7 +225,6 @@ void get_calibration_data(){
     std::cout<<std::endl;
 #endif
   }
-
 
   delete dbmysql;
 
@@ -332,8 +329,10 @@ int main(int argc,char* argv[]){
         char cage3[10];
         char cage4[10];
         char cage5[10];
-        char direction_num[10];
-        char direction_order[10];
+        char direction_num[20];
+        char direction_order[20];
+        char direction_custom_num[20];
+        char direction_custom_order[20];
         sprintf(ccount,"total:%d",g_count);
         sprintf(center,"enter:%d",g_enter);
         sprintf(cexit,"exit:%d",g_exit);
@@ -345,7 +344,9 @@ int main(int argc,char* argv[]){
         sprintf(cage4,"40-50:%d",g_age4);
         sprintf(cage5,">50:%d",g_age5);
         sprintf(direction_num,"p num:%d",g_pathways.size());
-        sprintf(direction_order,"p_order:%d",g_direction);
+        sprintf(direction_order,"p order:%d",g_direction);
+        sprintf(direction_custom_num,"p custom num:%d",g_pathways_custom.size());
+        sprintf(direction_custom_order,"p custom num:%d",g_direction_custom);
         cv::putText(frame,ccount,cv::Point(50,50),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,center,cv::Point(50,100),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,cexit,cv::Point(50,150),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
@@ -358,7 +359,23 @@ int main(int argc,char* argv[]){
         cv::putText(frame,cage5,cv::Point(50,500),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,direction_num,cv::Point(50,550),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::putText(frame,direction_order,cv::Point(50,600),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,direction_custom_num,cv::Point(50,650),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
+        cv::putText(frame,direction_custom_order,cv::Point(50,700),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,255,0));
         cv::rectangle(frame,g_roi,cv::Scalar(255,0,0),2);
+        for(unsigned int n=0;n<g_pathways.size();n++){
+          cv::line(frame,cv::Point(g_pathways[n][0].x,g_pathways[n][0].y),cv::Point(g_pathways[n][1].x,g_pathways[n][1].y),cv::Scalar(0,0,255),2);
+          cv::line(frame,cv::Point(0.5*(g_pathways[n][0].x+g_pathways[n][1].x),0.5*(g_pathways[n][0].y+g_pathways[n][1].y)),cv::Point(g_pathways[n][2].x,g_pathways[n][2].y),cv::Scalar(0,0,255),2);
+          char g_pathway_order[10];
+          sprintf(g_pathway_order,"%d",n+1);
+          cv::putText(frame,g_pathway_order,cv::Point(g_pathways[n][2].x,g_pathways[n][2].y-20),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(0,0,255));
+        }
+        for(unsigned int n=0;n<g_pathways_custom.size();n++){
+          cv::line(frame,cv::Point(g_pathways_custom[n][0].x,g_pathways_custom[n][0].y),cv::Point(g_pathways_custom[n][1].x,g_pathways_custom[n][1].y),cv::Scalar(255,255,0),2);
+          cv::line(frame,cv::Point(0.5*(g_pathways_custom[n][0].x+g_pathways_custom[n][1].x),0.5*(g_pathways_custom[n][0].y+g_pathways_custom[n][1].y)),cv::Point(g_pathways_custom[n][2].x,g_pathways_custom[n][2].y),cv::Scalar(255,255,0),2);
+          char g_pathway_custom_order[10];
+          sprintf(g_pathway_custom_order,"%d",n+1);
+          cv::putText(frame,g_pathway_custom_order,cv::Point(g_pathways_custom[n][2].x,g_pathways_custom[n][2].y-20),CV_FONT_HERSHEY_COMPLEX,1,cv::Scalar(255,255,0));
+        }
       }
       cv::imshow("frame",frame);
 #endif //DEBUG
